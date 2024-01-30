@@ -1,0 +1,10 @@
+monolog:
+    channels:
+        - mapping
+
+    handlers:
+        mapping:
+            type: rotating_file
+            channels: [ "mapping" ]
+            path: "%kernel.logs_dir%/%kernel.environment%.mapping.log"
+            max_files: 30
