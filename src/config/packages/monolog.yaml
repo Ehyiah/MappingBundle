@@ -1,0 +1,7 @@
+monolog:
+    handlers:
+        mapping:
+            type: rotating_file
+            path: "%kernel.logs_dir%/%kernel.environment%.mapping.log"
+            level: debug
+            channels: ["mapping"]

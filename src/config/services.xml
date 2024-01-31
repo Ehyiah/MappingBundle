@@ -5,6 +5,12 @@
         http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="Ehyiah\MappingBundle\MappingService" public="true" />
+        <service id="Ehyiah\MappingBundle\Transformer\TransformerLocator" public="true" />
+
+        <service id="Ehyiah\MappingBundle\MappingService" public="true">
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface"/>
+            <argument type="service" id="Ehyiah\MappingBundle\Transformer\TransformerLocator"/>
+            <argument type="service" id="monolog.logger.mapping"/>
+        </service>
     </services>
 </container>
