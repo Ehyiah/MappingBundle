@@ -2,6 +2,10 @@
 name: CI process for Symfony
 on:
     push:
+    pull_request:
+        branches:
+            - main
+            - dev
 
 jobs:
     quality:
