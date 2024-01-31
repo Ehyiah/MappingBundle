@@ -1,4 +1,7 @@
 monolog:
+    channels:
+        - mapping
+
     handlers:
         mapping:
             type: rotating_file
