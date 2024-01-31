@@ -53,3 +53,4 @@
 
 .idea
 .php-cs-fixer.cache
+.env.local
