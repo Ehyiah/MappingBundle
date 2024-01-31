@@ -3,3 +3,6 @@ services:
     php:
         volumes:
             - ~/.ssh:/root/.ssh
+
+#github local
+### https://lindevs.com/install-act-on-ubuntu

@@ -1,0 +1,69 @@
+# https://help.github.com/en/actions
+name: CI process for Symfony
+on:
+    push:
+
+jobs:
+    symfony:
+        name: Symfony Mapping Bundle (PHP ${{ matrix.php-versions }})
+        runs-on: ubuntu-20.04
+        strategy:
+            fail-fast: true
+            matrix:
+                php-versions: ['8.0']
+
+        steps:
+            # —— Setup Github actions 🐙 —————————————————————————————————————————————
+            # https://github.com/actions/checkout (official)
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  ref: ${{ github.head_ref }}
+                  fetch-depth: 0
+
+            # https://github.com/shivammathur/setup-php (community)
+            - name: Setup PHP, extensions and composer with shivammathur/setup-php
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php-versions }}
+                  extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_mysql, dom, filter, gd, iconv, json
+              env:
+                  update: true
+
+            - name: Check PHP Version
+              run: php -v
+
+            # —— Composer 🧙‍️ —————————————————————————————————————————————————————————
+            - name: Validate composer.json and composer.lock
+              run: composer validate
+
+#            - name: Cache Composer packages
+#              id: composer-cache
+#              uses: actions/cache@v3
+#              with:
+#                  path: vendor
+#                  key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}-test
+#                  restore-keys: |
+#                      ${{ runner.os }}-php-
+
+            - name: Install Dependencies
+              run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+            ## —— Coding standards ✨ ————————————————————————————————————————————————
+            - name: Coding standards checks (php-cs-fixer)
+              run: make fixer-php
+
+            ## —— Static analysis ✨ —————————————————————————————————————————————————
+            - name: Static analysis of PHP code (PHPStan)
+              run: make phpstan
+
+#            ## —— Tests ✅ ———————————————————————————————————————————————————————————
+#            - name: Load Doctrine fixtures and populate the Elasticsearch indexes
+#              run: |
+#                  make load-fixtures
+#                  make populate
+#
+#            - name: Run functionnal and unit tests
+#              run: |
+#                  cp phpunit.xml.ci phpunit.xml
+#                  make test-all
