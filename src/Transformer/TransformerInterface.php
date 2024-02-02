@@ -4,7 +4,7 @@ namespace Ehyiah\MappingBundle\Transformer;
 
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag('app.transformer.handler')]
+#[AutoconfigureTag('ehyiah.mapping_bundle.transformer')]
 interface TransformerInterface
 {
     public function transformationSupports(): string;
