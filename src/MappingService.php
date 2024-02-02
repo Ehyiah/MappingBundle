@@ -42,8 +42,8 @@ class MappingService
 
             if ($propertyAccessor->isWritable($entity, $target)) {
                 if ($propertyAccessor->isReadable($dto, $name)) {
-                    if (isset($path['transform'])) {
-                        $transformer = $this->transformationLocator->returnTransformer($path['transform']);
+                    if (isset($path['transformer'])) {
+                        $transformer = $this->transformationLocator->returnTransformer($path['transformer']);
                         $value = $transformer->transform($propertyAccessor->getValue($dto, $name), $path['options'], $entity, $dto);
                     } else {
                         $value = $propertyAccessor->getValue($dto, $name);
@@ -56,7 +56,7 @@ class MappingService
                         'entity' => $entity->getId(),
                         'target' => $target,
                         'value' => $value,
-                        'withTransform' => (isset($path['transform'], $transformer)) ? $transformer::class : false,
+                        'withTransform' => (isset($path['transformer'], $transformer)) ? $transformer::class : false,
                     ]);
                 }
             } else {
@@ -90,9 +90,9 @@ class MappingService
 
             if ($propertyAccessor->isWritable($dto, $target)) {
                 if ($propertyAccessor->isReadable($entity, $origin)) {
-                    if (isset($path['reverseTransform'])) {
-                        $transformer = $this->transformationLocator->returnTransformer($path['reverseTransform']);
-                        $value = $transformer->reverseTransform($propertyAccessor->getValue($entity, $origin), $path['options'], $entity, $dto);
+                    if (isset($path['reverseTransformer'])) {
+                        $reverseTransformer = $this->transformationLocator->returnReverseTransformer($path['reverseTransformer']);
+                        $value = $reverseTransformer->reverseTransform($propertyAccessor->getValue($entity, $origin), $path['options'], $entity, $dto);
                     } else {
                         $value = $propertyAccessor->getValue($entity, $origin);
                     }
@@ -103,7 +103,7 @@ class MappingService
                         'dto' => $dto::class,
                         'target' => $target,
                         'value' => $value,
-                        'withReverseTransform' => (isset($path['reverseTransform'], $transformer)) ? $transformer::class : false,
+                        'withReverseTransformer' => (isset($path['reverseTransformer'], $reverseTransformer)) ? $reverseTransformer::class : false,
                     ]);
                 }
             } else {
@@ -146,12 +146,12 @@ class MappingService
                     $mapping['targetClass'] = $targetClass;
                     $mapping['properties'][$property->getName()]['target'] = $entityPath;
 
-                    if (null !== $attributeToMap->newInstance()->transform) {
-                        $mapping['properties'][$property->getName()]['transform'] = $attributeToMap->newInstance()->transform;
+                    if (null !== $attributeToMap->newInstance()->transformer) {
+                        $mapping['properties'][$property->getName()]['transformer'] = $attributeToMap->newInstance()->transformer;
                         $mapping['properties'][$property->getName()]['options'] = $attributeToMap->newInstance()->options;
                     }
-                    if (null !== $attributeToMap->newInstance()->reverseTransform) {
-                        $mapping['properties'][$property->getName()]['reverseTransform'] = $attributeToMap->newInstance()->reverseTransform;
+                    if (null !== $attributeToMap->newInstance()->reverseTransformer) {
+                        $mapping['properties'][$property->getName()]['reverseTransformer'] = $attributeToMap->newInstance()->reverseTransformer;
                         $mapping['properties'][$property->getName()]['options'] = $attributeToMap->newInstance()->options;
                     }
                 }

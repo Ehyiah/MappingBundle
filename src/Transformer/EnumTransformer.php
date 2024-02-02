@@ -4,14 +4,14 @@ namespace Ehyiah\MappingBundle\Transformer;
 
 use Ehyiah\MappingBundle\Exceptions\ReverseTransformeException;
 use Ehyiah\MappingBundle\Exceptions\WrongDataTypeTransformerException;
+use Ehyiah\MappingBundle\Transformer\Interfaces\ReverseTransformerInterface;
+use Ehyiah\MappingBundle\Transformer\Interfaces\TransformerInterface;
 
-final class EnumTransformer implements TransformerInterface
+final class EnumTransformer implements TransformerInterface, ReverseTransformerInterface
 {
-    public const TRANSFORMATION_NAME = 'EnumTransformer';
-
     public function transformationSupports(): string
     {
-        return self::TRANSFORMATION_NAME;
+        return self::class;
     }
 
     public function transform(mixed $data, array $options, object $entity, object $dto): mixed
@@ -20,6 +20,8 @@ final class EnumTransformer implements TransformerInterface
     }
 
     /**
+     * @param array<mixed> $options
+     *
      * @throws WrongDataTypeTransformerException
      * @throws ReverseTransformeException
      */
