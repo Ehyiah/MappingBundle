@@ -54,4 +54,7 @@ ci: ## Launch csfixer and phpstan and javascript quality check
 fixer-php: ## Launch csfixer no dry
 	$(COMPOSER) phpcsfixer
 
-.PHONY: ci fixer-php
+phpstan: ## Launch phpstan
+	$(COMPOSER) phpstan
+
+.PHONY: ci fixer-php phpstan

@@ -4,6 +4,5 @@ services:
         volumes:
             - ~/.ssh:/root/.ssh
 
-#github local
+# github local doc
 ### https://lindevs.com/install-act-on-ubuntu
-### start with act -s GITHUB_TOKEN and provide a github personnal access token
