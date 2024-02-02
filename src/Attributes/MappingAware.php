@@ -23,8 +23,8 @@ class MappingAware
         public ?string $target = null,
         public ?string $transform = null,
         public ?string $reverseTransform = null,
-        /** @var array<mixed>|null */
-        public ?array $options = null,
+        /** @var array<mixed> */
+        public array $options = [],
     ) {
     }
 }

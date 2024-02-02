@@ -20,7 +20,7 @@ final class DateTransformer implements TransformerInterface
      * @throws WrongDataTypeTransformerException
      * @throws Exception
      */
-    public function transform(mixed $data, array $options = null): DateTime
+    public function transform(mixed $data, array $options, object $entity, object $dto): DateTime
     {
         if (!is_string($data)) {
             throw new WrongDataTypeTransformerException('Data is supposed to be a string to use transforme : ' . self::TRANSFORMATION_NAME . ' transformer, ' . gettype($data) . ' provided');
@@ -32,7 +32,7 @@ final class DateTransformer implements TransformerInterface
     /**
      * @throws WrongDataTypeTransformerException
      */
-    public function reverseTransform(mixed $data, array $options = null): string
+    public function reverseTransform(mixed $data, array $options, object $entity, object $dto): string
     {
         if (!$data instanceof DateTimeInterface) {
             throw new WrongDataTypeTransformerException('Data is supposed to be a DateTime Interface to use reverse Transformer : ' . self::TRANSFORMATION_NAME . ' transformer, ' . gettype($data) . ' provided');

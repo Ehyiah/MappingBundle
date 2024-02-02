@@ -44,7 +44,7 @@ class MappingService
                 if ($propertyAccessor->isReadable($dto, $name)) {
                     if (isset($path['transform'])) {
                         $transformer = $this->transformationLocator->returnTransformer($path['transform']);
-                        $value = $transformer->transform($propertyAccessor->getValue($dto, $name), $path['options'] ?? null);
+                        $value = $transformer->transform($propertyAccessor->getValue($dto, $name), $path['options'], $entity, $dto);
                     } else {
                         $value = $propertyAccessor->getValue($dto, $name);
                     }
@@ -92,7 +92,7 @@ class MappingService
                 if ($propertyAccessor->isReadable($entity, $origin)) {
                     if (isset($path['reverseTransform'])) {
                         $transformer = $this->transformationLocator->returnTransformer($path['reverseTransform']);
-                        $value = $transformer->reverseTransform($propertyAccessor->getValue($entity, $origin), $path['options'] ?? null);
+                        $value = $transformer->reverseTransform($propertyAccessor->getValue($entity, $origin), $path['options'], $entity, $dto);
                     } else {
                         $value = $propertyAccessor->getValue($entity, $origin);
                     }

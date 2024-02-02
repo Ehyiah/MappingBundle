@@ -13,7 +13,7 @@ final class TransformerPass implements CompilerPassInterface
     {
         $definition = $container->findDefinition(TransformerLocator::class);
 
-        foreach ($container->findTaggedServiceIds('app.transformer.handler') as $id => $tag) {
+        foreach ($container->findTaggedServiceIds('ehyiah.mapping_bundle.transformer') as $id => $tag) {
             $definition->addMethodCall('addTransformer', [new Reference($id)]);
         }
     }

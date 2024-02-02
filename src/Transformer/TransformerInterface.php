@@ -4,18 +4,18 @@ namespace Ehyiah\MappingBundle\Transformer;
 
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AutoconfigureTag('app.transformer.handler')]
+#[AutoconfigureTag('ehyiah.mapping_bundle.transformer')]
 interface TransformerInterface
 {
     public function transformationSupports(): string;
 
     /**
-     * @param array<mixed>|null $options
+     * @param array<mixed> $options
      */
-    public function transform(mixed $data, array $options = null): mixed;
+    public function transform(mixed $data, array $options, object $entity, object $dto): mixed;
 
     /**
-     * @param array<mixed>|null $options
+     * @param array<mixed> $options
      */
-    public function reverseTransform(mixed $data, array $options = null): mixed;
+    public function reverseTransform(mixed $data, array $options, object $entity, object $dto): mixed;
 }
