@@ -1,0 +1,8 @@
+version: '3.8'
+services:
+    php:
+        volumes:
+            - ~/.ssh:/root/.ssh
+
+# github local doc
+### https://lindevs.com/install-act-on-ubuntu
