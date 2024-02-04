@@ -13,16 +13,16 @@ class MappingAware
      * If the attribute is the same on both DTO and entity, no target is needed the service will automap on the same name for entity and DTO
      *
      * Transformers can be applied when mapping property to Entity or DTO
-     * transform property is to be used when mapping to Entity
-     * reverseTransform is to be used when mapping to DTO
-     * options is an array passed on transform and reverseTransform methods if you need to add context or custom options to use in your transformers
+     * transformer property is to be used when mapping to Entity
+     * reverseTransformer is to be used when mapping to DTO
+     * options is an array passed on transformer and reverseTransformer methods if you need to add context or custom options to use in your transformers
      *
      * Custom transformers can easily be created : look at DateTransformer as example to create your own as needed
      */
     public function __construct(
         public ?string $target = null,
-        public ?string $transform = null,
-        public ?string $reverseTransform = null,
+        public ?string $transformer = null,
+        public ?string $reverseTransformer = null,
         /** @var array<mixed> */
         public array $options = [],
     ) {
