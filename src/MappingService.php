@@ -25,7 +25,7 @@ class MappingService
      * @throws ReflectionException
      * @throws MappingException
      */
-    public function mapToEntity(object $dto, object $entity = null, bool $flush = true): object
+    public function mapToTargetEntity(object $dto, object $entity = null, bool $flush = true): object
     {
         $mapping = $this->getPropertiesToMap($dto);
 
@@ -78,7 +78,7 @@ class MappingService
      * @throws ReflectionException
      * @throws MappingException
      */
-    public function mapToDTO(object $entity, object $dto): object
+    public function mapFromTarget(object $entity, object $dto): object
     {
         $mapping = $this->getPropertiesToMap($dto);
 
