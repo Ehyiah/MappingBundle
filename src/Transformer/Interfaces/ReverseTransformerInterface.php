@@ -15,5 +15,5 @@ interface ReverseTransformerInterface
     /**
      * @param array<mixed> $options
      */
-    public function reverseTransform(mixed $data, array $options, object $entity, object $dto): mixed;
+    public function reverseTransform(mixed $data, array $options, object $targetObject, object $mappedObject): mixed;
 }

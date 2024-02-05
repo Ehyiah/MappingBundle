@@ -25,13 +25,16 @@ class MappingService
      * @throws ReflectionException
      * @throws MappingException
      */
-    public function mapToEntity(object $dto, object $entity = null, bool $flush = true): object
+    public function mapToTarget(object $mappedObject, object $targetObject = null, bool $persist = false, bool $flush = false): object
     {
-        $mapping = $this->getPropertiesToMap($dto);
+        $mapping = $this->getPropertiesToMap($mappedObject);
 
-        if (null === $entity) {
-            $entity = new $mapping['targetClass']();
-            $this->entityManager->persist($entity);
+        if (null === $targetObject) {
+            $targetObject = new $mapping['targetClass']();
+
+            if (true === $persist) {
+                $this->entityManager->persist($targetObject);
+            }
         }
 
         $propertyAccessor = new PropertyAccessor();
@@ -40,29 +43,29 @@ class MappingService
         foreach ($mapping['properties'] as $name => $path) {
             $target = $path['target'];
 
-            if ($propertyAccessor->isWritable($entity, $target)) {
-                if ($propertyAccessor->isReadable($dto, $name)) {
+            if ($propertyAccessor->isWritable($targetObject, $target)) {
+                if ($propertyAccessor->isReadable($mappedObject, $name)) {
                     if (isset($path['transformer'])) {
                         $transformer = $this->transformationLocator->returnTransformer($path['transformer']);
-                        $value = $transformer->transform($propertyAccessor->getValue($dto, $name), $path['options'], $entity, $dto);
+                        $value = $transformer->transform($propertyAccessor->getValue($mappedObject, $name), $path['options'], $targetObject, $mappedObject);
                     } else {
-                        $value = $propertyAccessor->getValue($dto, $name);
+                        $value = $propertyAccessor->getValue($mappedObject, $name);
                     }
 
-                    $propertyAccessor->setValue($entity, $target, $value);
+                    $propertyAccessor->setValue($targetObject, $target, $value);
                     ++$modificationCount;
 
-                    $this->mappingLogger->info('Mapping property into entity', [
-                        'entity' => $entity->getId(),
+                    $this->mappingLogger->info('Mapping property into target object', [
+                        'targetObject' => $targetObject->getId() ?? $targetObject,
                         'target' => $target,
                         'value' => $value,
                         'withTransform' => (isset($path['transformer'], $transformer)) ? $transformer::class : false,
                     ]);
                 }
             } else {
-                $this->mappingLogger->alert('try to access not writable property in Entity : ' . $entity::class, [
-                    'target' => $path,
-                    'dtoPropertyName' => $name,
+                $this->mappingLogger->alert('try to access not writable property in target object : ' . $targetObject::class, [
+                    'targetPath' => $path,
+                    'sourceName' => $name,
                 ]);
             }
         }
@@ -71,16 +74,16 @@ class MappingService
             $this->entityManager->flush();
         }
 
-        return $entity;
+        return $targetObject;
     }
 
     /**
      * @throws ReflectionException
      * @throws MappingException
      */
-    public function mapToDTO(object $entity, object $dto): object
+    public function mapFromTarget(object $targetObject, object $mappedObject): object
     {
-        $mapping = $this->getPropertiesToMap($dto);
+        $mapping = $this->getPropertiesToMap($mappedObject);
 
         $propertyAccessor = new PropertyAccessor();
 
@@ -88,33 +91,33 @@ class MappingService
             $origin = $path['target'];
             $target = $name;
 
-            if ($propertyAccessor->isWritable($dto, $target)) {
-                if ($propertyAccessor->isReadable($entity, $origin)) {
+            if ($propertyAccessor->isWritable($mappedObject, $target)) {
+                if ($propertyAccessor->isReadable($targetObject, $origin)) {
                     if (isset($path['reverseTransformer'])) {
                         $reverseTransformer = $this->transformationLocator->returnReverseTransformer($path['reverseTransformer']);
-                        $value = $reverseTransformer->reverseTransform($propertyAccessor->getValue($entity, $origin), $path['options'], $entity, $dto);
+                        $value = $reverseTransformer->reverseTransform($propertyAccessor->getValue($targetObject, $origin), $path['options'], $targetObject, $mappedObject);
                     } else {
-                        $value = $propertyAccessor->getValue($entity, $origin);
+                        $value = $propertyAccessor->getValue($targetObject, $origin);
                     }
 
-                    $propertyAccessor->setValue($dto, $target, $value);
+                    $propertyAccessor->setValue($mappedObject, $target, $value);
 
-                    $this->mappingLogger->info('Mapping property into DTO', [
-                        'dto' => $dto::class,
+                    $this->mappingLogger->info('Mapping property into target Object', [
+                        'targetObject' => $mappedObject::class,
                         'target' => $target,
                         'value' => $value,
                         'withReverseTransformer' => (isset($path['reverseTransformer'], $reverseTransformer)) ? $reverseTransformer::class : false,
                     ]);
                 }
             } else {
-                $this->mappingLogger->alert('try to access not writable property in DTO : ' . $dto::class, [
+                $this->mappingLogger->alert('try to access not writable property in target Object : ' . $mappedObject::class, [
                     'target' => $path,
-                    'dtoPropertyName' => $name,
+                    'sourcePropertyName' => $name,
                 ]);
             }
         }
 
-        return $dto;
+        return $mappedObject;
     }
 
     /**
@@ -123,9 +126,9 @@ class MappingService
      * @throws ReflectionException
      * @throws MappingException
      */
-    public function getPropertiesToMap(object $dto): array
+    public function getPropertiesToMap(object $mappedObject): array
     {
-        $reflection = new ReflectionClass($dto::class);
+        $reflection = new ReflectionClass($mappedObject::class);
         $attributesClass = $reflection->getAttributes(MappingAware::class);
 
         if (0 === count($attributesClass)) {
@@ -142,9 +145,9 @@ class MappingService
             foreach ($properties as $property) {
                 $attributesToMap = $property->getAttributes(MappingAware::class);
                 foreach ($attributesToMap as $attributeToMap) {
-                    $entityPath = $attributeToMap->newInstance()->target ?? $property->getName();
+                    $targetPath = $attributeToMap->newInstance()->target ?? $property->getName();
                     $mapping['targetClass'] = $targetClass;
-                    $mapping['properties'][$property->getName()]['target'] = $entityPath;
+                    $mapping['properties'][$property->getName()]['target'] = $targetPath;
 
                     if (null !== $attributeToMap->newInstance()->transformer) {
                         $mapping['properties'][$property->getName()]['transformer'] = $attributeToMap->newInstance()->transformer;
