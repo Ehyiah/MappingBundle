@@ -15,5 +15,5 @@ interface TransformerInterface
     /**
      * @param array<mixed> $options
      */
-    public function transform(mixed $data, array $options, object $entity, object $dto): mixed;
+    public function transform(mixed $data, array $options, object $targetObject, object $mappedObject): mixed;
 }
