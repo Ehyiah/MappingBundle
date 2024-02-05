@@ -9,7 +9,7 @@ use Ehyiah\MappingBundle\Exceptions\TransformerNotFoundException;
 use Ehyiah\MappingBundle\Transformer\Interfaces\ReverseTransformerInterface;
 use Ehyiah\MappingBundle\Transformer\Interfaces\TransformerInterface;
 
-final class TransformerLocator
+class TransformerLocator
 {
     /**
      * @var array<TransformerInterface>

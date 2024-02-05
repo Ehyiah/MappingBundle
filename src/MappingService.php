@@ -56,7 +56,7 @@ class MappingService
                     ++$modificationCount;
 
                     $this->mappingLogger->info('Mapping property into target object', [
-                        'targetObject' => $targetObject->getId() ?? $targetObject,
+                        'targetObject' => $targetObject::class,
                         'target' => $target,
                         'value' => $value,
                         'withTransform' => (isset($path['transformer'], $transformer)) ? $transformer::class : false,

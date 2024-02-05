@@ -57,4 +57,7 @@ fixer-php: ## Launch csfixer no dry
 phpstan: ## Launch phpstan
 	$(COMPOSER) phpstan
 
-.PHONY: ci fixer-php phpstan
+.PHONY: ci fixer-php phpstan phptests
+
+phptests:
+	$(PHP) vendor/bin/phpunit
