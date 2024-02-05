@@ -1,7 +1,6 @@
 # MappingBundle
-Symfony bundle to automap Entity to DTO and DTO to Entity.
+Symfony bundle to automap an object into another object easily.
 
-This bundle is useful when you want to map properties from an object to another object.
 It was mainly built in order to avoid passing full entities to symfony forms when you want to edit them. But you can use it in many ways.
 
 It was designed to be as easy as possible, all the mapping is located into a single object that is "aware" of the target class and properties destinations.
@@ -9,12 +8,10 @@ There is no configuration outside of the main object.
 
 The main service have two methods :
 
-- mapToEntity.
-This method will map a plain object (as a DTO) to an entity if you configure the target as an entity. you can choose to flush or not when calling this method.
+- mapToTarget : This method will map the mapped Aware object to a target object. The target object can be another simple object or an entity.
+e.g : You have a form with a data_class that is an object that will represent some properties of an entity, for a User for example.
 
-
-- mapToDTO
-this method will map an object (as a DTO or an entity) to object that holds the MappingAware Attribute.
+- mapFromTarget : this method will do the opposite. It will take an object (or an entity that is tagged as the target) and map properties into the mapped Aware object.
 
 Installation
 ============
@@ -70,6 +67,7 @@ As the mapping logic is using the propertAccess component, you can specify neste
 There is nothing else to do.
 
 ## Simple Usage
+
 ```php
     // src/DTO/MyAwesomeDTO
 
@@ -93,9 +91,14 @@ There is nothing else to do.
     }
 ```
 
-If you call mapToEntity(), the service will take properties tagged with MappingAware and will put the values stored in the DTO into the properies in the entity and flush them (default value).
+If you call mapToTarget() in a controller, handler or wherever you need it, the service will take properties tagged with MappingAware and will put the values stored in the DTO 
+into the properies in the entity and flush them (default value).
+
 
 ## Advanced usage
+
+### Transformers
+
 Sometimes you need to modify data between the objects.
 Example : in your DTO you have a string and need a Datetime in the other object.
 Or the opposite
@@ -104,10 +107,10 @@ Well there is a simple way to do this via the Transformers.
 You can easily create them or use some of prebuilt.
 To create them just create a class and implements TransformerInterface or ReverseTransformerInterface (or both if you need both)
 
-Transformers can have 2 methods transform and reverseTransform. and you can pass an array of options.
-transform is used in mapToEntity
+Transformers can have 2 methods transform and reverseTransform. and you can pass an array of options that will be used in both.
 
-reverseTransform is used in mapToDto
+transform method is used in mapToTarget
+
 ```php
     // src/DTO/MyAwesomeDTO
 
@@ -122,5 +125,17 @@ reverseTransform is used in mapToDto
     }
 ```
 
+reverseTransform method is used in mapFromTarget
+```php
+    // src/DTO/MyAwesomeDTO
 
-### Transformers
+    use App\src\Entity;
+    use Ehyiah\MappingBundle\Attributes;
+    
+    #[MappingAware(target: MyAwesomeEntity::class)]
+    class MyAwesomeDTO
+    {
+        #[MappingAware(reverseTransform: \Ehyiah\MappingBundle\Transformer\DateTimeTransformer::class, options: ['option1' => 'value1'])]
+        public string $date
+    }
+```
