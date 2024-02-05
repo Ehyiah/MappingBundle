@@ -14,7 +14,7 @@ final class EnumTransformer implements TransformerInterface, ReverseTransformerI
         return self::class;
     }
 
-    public function transform(mixed $data, array $options, object $entity, object $dto): mixed
+    public function transform(mixed $data, array $options, object $targetObject, object $mappedObject): mixed
     {
         return $data;
     }
@@ -25,7 +25,7 @@ final class EnumTransformer implements TransformerInterface, ReverseTransformerI
      * @throws WrongDataTypeTransformerException
      * @throws ReverseTransformeException
      */
-    public function reverseTransform(mixed $data, array $options, object $entity, object $dto): mixed
+    public function reverseTransform(mixed $data, array $options, object $targetObject, object $mappedObject): mixed
     {
         if (null === $data) {
             return [];
