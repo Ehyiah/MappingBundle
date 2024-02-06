@@ -1,7 +1,7 @@
 {
     "type": "symfony-bundle",
     "name": "ehyiah/mapping-bundle",
-    "description": "Symfony Bundle to easily map entity to a DTO or DTO to an entity",
+    "description": "Symfony Bundle to easily map Objects into each other",
     "keywords": [
         "symfony",
         "mapping"
