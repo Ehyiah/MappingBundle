@@ -14,7 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 /**
  * @coversDefaultClass \Ehyiah\MappingBundle\MappingService
  */
-class MappingServiceTest extends KernelTestCase
+final class MappingServiceTest extends KernelTestCase
 {
     private $entityManager;
     private $transformerLocator;
@@ -52,6 +52,31 @@ class MappingServiceTest extends KernelTestCase
     }
 
     /**
+     * @covers \Ehyiah\MappingBundle\MappingService::mapToTarget
+     */
+    public function testMapFromTarget(): void
+    {
+        $mappingService = new MappingService($this->entityManager, $this->transformerLocator, $this->logger);
+
+        $targetObject = new DummyTargetObject();
+        $targetObject->string = 'just a string';
+        $targetObject->theOtherDestination = 'the other destination to be mapped';
+        $targetObject->boolean = true;
+        $targetObject->notMappedProperty = 'i must not be mapped';
+
+        $result = $mappingService->mapFromTarget($targetObject, new DummyMappedObject());
+
+        $this->assertInstanceOf(DummyMappedObject::class, $result);
+        $this->assertEquals($targetObject->string, $result->string);
+        $this->assertIsString($result->string);
+        $this->assertEquals($targetObject->boolean, $result->boolean);
+        $this->assertIsBool($result->boolean);
+        $this->assertEquals($targetObject->theOtherDestination, $result->withOtherDestination);
+
+        $this->assertEquals('i am not mapped', $result->notMappedProperty);
+    }
+
+    /**
      * @covers \Ehyiah\MappingBundle\MappingService::getPropertiesToMap
      */
     public function testGetPropertiesToMap(): void
@@ -77,11 +102,18 @@ class MappingServiceTest extends KernelTestCase
         $this->assertEquals(DateTimeTransformer::class, $properties['withTransform']['transformer']);
         $this->assertArrayHasKey('options', $properties['withTransform']);
 
+        $this->assertEquals(DateTimeTransformer::class, $properties['withTransformAndOptions']['transformer']);
+        $this->assertArrayHasKey('options', $properties['withTransformAndOptions']);
+        $this->assertArrayHasKey('option1', $properties['withTransformAndOptions']['options']);
+        $this->assertEquals('value1', $properties['withTransformAndOptions']['options']['option1']);
+
         $this->assertArrayHasKey('withReverseTransform', $properties);
         $this->assertEquals(DateTimeTransformer::class, $properties['withReverseTransform']['reverseTransformer']);
 
         $this->assertEquals(DateTimeTransformer::class, $properties['withReverseTransformAndOptions']['reverseTransformer']);
         $this->assertArrayHasKey('options', $properties['withReverseTransformAndOptions']);
+        $this->assertArrayHasKey('option1', $properties['withReverseTransformAndOptions']['options']);
+        $this->assertEquals('value1', $properties['withReverseTransformAndOptions']['options']['option1']);
 
         $this->assertArrayHasKey('withOtherDestination', $properties);
         $this->assertEquals('theOtherDestination', $properties['withOtherDestination']['target']);
