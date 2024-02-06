@@ -12,7 +12,7 @@ use ReflectionClass;
 use ReflectionException;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
-class MappingService
+final class MappingService
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -25,7 +25,7 @@ class MappingService
      * @throws ReflectionException
      * @throws MappingException
      */
-    public function mapToTarget(object $mappedObject, object $targetObject = null, bool $persist = false, bool $flush = false): object
+    public function mapToTarget(object $mappedObject, ?object $targetObject = null, bool $persist = false, bool $flush = false): object
     {
         $mapping = $this->getPropertiesToMap($mappedObject);
 
@@ -56,7 +56,7 @@ class MappingService
                     ++$modificationCount;
 
                     $this->mappingLogger->info('Mapping property into target object', [
-                        'targetObject' => $targetObject->getId() ?? $targetObject,
+                        'targetObject' => $targetObject::class,
                         'target' => $target,
                         'value' => $value,
                         'withTransform' => (isset($path['transformer'], $transformer)) ? $transformer::class : false,

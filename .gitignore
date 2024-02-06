@@ -55,3 +55,4 @@
 .php-cs-fixer.cache
 .env.local
 docker-compose.override.yaml
+/.phpunit.cache/
