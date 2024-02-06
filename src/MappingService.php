@@ -25,7 +25,7 @@ final class MappingService
      * @throws ReflectionException
      * @throws MappingException
      */
-    public function mapToTarget(object $mappedObject, object $targetObject = null, bool $persist = false, bool $flush = false): object
+    public function mapToTarget(object $mappedObject, ?object $targetObject = null, bool $persist = false, bool $flush = false): object
     {
         $mapping = $this->getPropertiesToMap($mappedObject);
 

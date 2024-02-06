@@ -16,7 +16,17 @@ final class EnumTransformer implements TransformerInterface, ReverseTransformerI
 
     public function transform(mixed $data, array $options, object $targetObject, object $mappedObject): mixed
     {
-        return $data;
+        if (is_array($data)) {
+            $array = [];
+
+            foreach ($data as $datum) {
+                $array[] = $datum->value;
+            }
+
+            return $array;
+        }
+
+        return $data->value;
     }
 
     /**
@@ -31,7 +41,7 @@ final class EnumTransformer implements TransformerInterface, ReverseTransformerI
             return [];
         }
         if (!isset($options['enum'])) {
-            throw new ReverseTransformeException('option enum must be specified to use this transformer : ' . self::class);
+            throw new ReverseTransformeException('option enum must be specified to use this reverse transformer : ' . self::class);
         }
 
         $enumClass = $options['enum'];
@@ -39,10 +49,10 @@ final class EnumTransformer implements TransformerInterface, ReverseTransformerI
             throw new ReverseTransformeException('enum class doest not exist : ' . $enumClass);
         }
 
-        if (!is_array($data)) {
-            throw new WrongDataTypeTransformerException('Data is supposed to be an array in reverseTransform inside ' . self::class);
+        if (is_array($data)) {
+            return array_map(fn ($item) => $enumClass::tryFrom($item), $data);
         }
 
-        return array_map(fn ($item) => $enumClass::tryFrom($item), $data);
+        return $enumClass::tryFrom($data);
     }
 }
