@@ -12,7 +12,7 @@ use ReflectionClass;
 use ReflectionException;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
-class MappingService
+final class MappingService
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
