@@ -10,11 +10,11 @@ on:
 jobs:
     quality:
         name: Symfony Mapping Bundle (PHP ${{ matrix.php-versions }})
-        runs-on: ubuntu-20.04
+        runs-on: ubuntu-22.04
         strategy:
             fail-fast: true
             matrix:
-                php-versions: ['8.0', '8.1', '8.2']
+                php-versions: ['8.1', '8.2', '8.3']
 
         steps:
             # —— Setup Github actions 🐙 —————————————————————————————————————————————
@@ -71,11 +71,11 @@ jobs:
 
     security:
         name: composer security check (PHP ${{ matrix.php-versions }})
-        runs-on: ubuntu-20.04
+        runs-on: ubuntu-22.04
         strategy:
             fail-fast: true
             matrix:
-                php-versions: [ '8.0', '8.1', '8.2' ]
+                php-versions: [ '8.1', '8.2', '8.3' ]
         steps:
             - uses: actions/checkout@v4
             - uses: symfonycorp/security-checker-action@v4
