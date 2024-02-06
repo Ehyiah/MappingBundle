@@ -3,7 +3,10 @@
 namespace Ehyiah\MappingBundle\Tests\Integration;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Ehyiah\MappingBundle\Attributes\MappingAware;
+use Ehyiah\MappingBundle\Exceptions\NotMappableObject;
 use Ehyiah\MappingBundle\Tests\Dummy\DummyMappedObject;
+use Ehyiah\MappingBundle\Tests\Dummy\DummyMappedObjectWithoutAttribute;
 use Ehyiah\MappingBundle\Tests\Dummy\DummyTargetObject;
 use Ehyiah\MappingBundle\MappingService;
 use Ehyiah\MappingBundle\Transformer\DateTimeTransformer;
@@ -117,5 +120,18 @@ final class MappingServiceTest extends KernelTestCase
 
         $this->assertArrayHasKey('withOtherDestination', $properties);
         $this->assertEquals('theOtherDestination', $properties['withOtherDestination']['target']);
+    }
+
+    /**
+     * @covers \Ehyiah\MappingBundle\MappingService::getPropertiesToMap
+     */
+    public function testMissingAttributeOnClass(): void
+    {
+        $mappingService = new MappingService($this->entityManager, $this->transformerLocator, $this->logger);
+
+        $this->expectExceptionObject(new NotMappableObject('Can not automap object, because object is not using Attribute : ' . MappingAware::class));
+
+        $dto = new DummyMappedObjectWithoutAttribute();
+        $mappingService->getPropertiesToMap($dto);
     }
 }

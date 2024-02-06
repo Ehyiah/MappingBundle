@@ -61,15 +61,13 @@ jobs:
             - name: Static analysis of PHP code (PHPStan)
               run: ./vendor/bin/phpstan --memory-limit=1G analyse
 
-#            ## —— Tests ✅ ———————————————————————————————————————————————————————————
+            ## —— Tests ✅ ———————————————————————————————————————————————————————————
 #            - name: Load Doctrine fixtures
 #              run: |
 #                  bin/console .... load fixtures
 #
-#            - name: Run functionnal and unit tests
-#              run: |
-#                  cp phpunit.xml.ci phpunit.xml
-#                   bin/console .... start tests
+            - name: Run functionnal and unit tests
+              run: ./vendor/bin/phpunit
 
     security:
         name: composer security check (PHP ${{ matrix.php-versions }})
