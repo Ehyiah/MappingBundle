@@ -21,6 +21,7 @@ class MappingAware
      */
     public function __construct(
         public ?string $target = null,
+        public ?bool $clearCollection = true,
         public ?string $transformer = null,
         public ?string $reverseTransformer = null,
         /** @var array<mixed> */

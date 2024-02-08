@@ -2,6 +2,7 @@
 
 namespace Ehyiah\MappingBundle;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Ehyiah\MappingBundle\Attributes\MappingAware;
 use Ehyiah\MappingBundle\Exceptions\MappingException;
@@ -52,7 +53,39 @@ final class MappingService
                         $value = $propertyAccessor->getValue($mappedObject, $name);
                     }
 
-                    $propertyAccessor->setValue($targetObject, $target, $value);
+                    if ($value instanceof Collection && isset($path['clearCollection']) && false === $path['clearCollection']) {
+                        $oldValues = $propertyAccessor->getValue($targetObject, $target);
+                        $keep = [];
+                        foreach ($oldValues as $oldValue) {
+                            $keep[$oldValue->getId()] = $oldValue;
+                        }
+
+                        foreach ($value as $v) {
+                            $vMapping = $this->getPropertiesToMap($v);
+                            $newElement = new $vMapping['targetClass']();
+                            $oldId = $propertyAccessor->getValue($v, 'id');
+                            if (null !== $oldId && array_key_exists($oldId, $keep)) {
+                                $newElement = $this->entityManager->getRepository($newElement::class)->findOneBy(['id' => $oldId]);
+                                $newElement = $this->mapToTarget($v, $newElement);
+                                $keep[$oldId] = $newElement;
+                            } elseif (null === $oldId) {
+                                $keep[] = $this->mapToTarget($v, $newElement);
+                            } else {
+                                $this->mappingLogger->alert('try to edit not existing element : ' . $targetObject::class, [
+                                    'target' => $path,
+                                    'dtoPropertyName' => $name,
+                                    'id' => $oldId,
+                                ]);
+                            }
+                        }
+
+                        $propertyAccessor->setValue($targetObject, $target, $keep);
+                    } else {
+                        if (null !== $value) {
+                            $propertyAccessor->setValue($targetObject, $target, $value);
+                        }
+                    }
+
                     ++$modificationCount;
 
                     $this->mappingLogger->info('Mapping property into target object', [
