@@ -13,13 +13,13 @@ class MappingExtension extends Extension implements PrependExtensionInterface
 {
     public function prepend(ContainerBuilder $container): void
     {
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../config/packages'));
+        $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../../config/packages'));
         $loader->load('monolog.yaml');
     }
 
     public function load(array $configs, ContainerBuilder $container): void
     {
-        $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../config'));
+        $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../../config'));
         $loader->load('services.xml');
     }
 }

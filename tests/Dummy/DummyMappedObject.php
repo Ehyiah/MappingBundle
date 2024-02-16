@@ -2,6 +2,7 @@
 
 namespace Ehyiah\MappingBundle\Tests\Dummy;
 
+use DateTime;
 use Ehyiah\MappingBundle\Attributes\MappingAware;
 use Ehyiah\MappingBundle\Transformer\DateTimeTransformer;
 
@@ -23,10 +24,10 @@ class DummyMappedObject
     public ?string $withTransformAndOptions = null;
 
     #[MappingAware(reverseTransformer: DateTimeTransformer::class)]
-    public ?string $withReverseTransform = null;
+    public ?DateTime $withReverseTransform = null;
 
     #[MappingAware(reverseTransformer: DateTimeTransformer::class, options: ['option1' => 'value1'])]
-    public ?string $withReverseTransformAndOptions = null;
+    public ?DateTime $withReverseTransformAndOptions = null;
 
     #[MappingAware(target: 'theOtherDestination')]
     public ?string $withOtherDestination = null;
