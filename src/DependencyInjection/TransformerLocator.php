@@ -1,6 +1,6 @@
 <?php
 
-namespace Ehyiah\MappingBundle\Transformer;
+namespace Ehyiah\MappingBundle\DependencyInjection;
 
 use Ehyiah\MappingBundle\Exceptions\MultipleReverseTransformerException;
 use Ehyiah\MappingBundle\Exceptions\MultipleTransformerException;

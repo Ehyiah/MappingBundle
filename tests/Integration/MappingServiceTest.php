@@ -2,15 +2,16 @@
 
 namespace Ehyiah\MappingBundle\Tests\Integration;
 
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Ehyiah\MappingBundle\Attributes\MappingAware;
+use Ehyiah\MappingBundle\DependencyInjection\TransformerLocator;
 use Ehyiah\MappingBundle\Exceptions\NotMappableObject;
+use Ehyiah\MappingBundle\MappingService;
 use Ehyiah\MappingBundle\Tests\Dummy\DummyMappedObject;
 use Ehyiah\MappingBundle\Tests\Dummy\DummyMappedObjectWithoutAttribute;
 use Ehyiah\MappingBundle\Tests\Dummy\DummyTargetObject;
-use Ehyiah\MappingBundle\MappingService;
 use Ehyiah\MappingBundle\Transformer\DateTimeTransformer;
-use Ehyiah\MappingBundle\Transformer\TransformerLocator;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -19,9 +20,6 @@ use Psr\Log\LoggerInterface;
  */
 final class MappingServiceTest extends TestCase
 {
-    private $entityManager;
-    private $logger;
-
     private function createService(): MappingService
     {
         $transformerLocator = $this->createMock(TransformerLocator::class);
@@ -29,13 +27,7 @@ final class MappingServiceTest extends TestCase
         $transformerLocator->method('returnTransformer')->willReturnCallback(fn(string $transformation) => new $transformation());
         $transformerLocator->method('returnReverseTransformer')->willReturnCallback(fn(string $transformation) => new $transformation());
 
-        return new MappingService($this->entityManager, $transformerLocator, $this->logger);
-    }
-
-    protected function setUp(): void
-    {
-        $this->entityManager = $this->createMock(EntityManagerInterface::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
+        return new MappingService($this->createMock(EntityManagerInterface::class), $transformerLocator, $this->createMock(LoggerInterface::class));
     }
 
     /**
@@ -48,17 +40,24 @@ final class MappingServiceTest extends TestCase
         $dto = new DummyMappedObject();
         $dto->string = 'just a string';
         $dto->boolean = true;
-        $dto->withOtherDestination = 'the other destination';
         $dto->withTransform = '2012-01-01';
-        $dto->withReverseTransform = new \DateTime('now');
+        $dto->withReverseTransform = new DateTime('2012-01-01');
+        $dto->withOtherDestination = 'the other destination';
 
         $result = $mappingService->mapToTarget($dto);
 
         $this->assertInstanceOf(DummyTargetObject::class, $result);
-        $this->assertEquals($dto->string, $result->string);
         $this->assertIsString($result->string);
-        $this->assertEquals($dto->boolean, $result->boolean);
+        $this->assertEquals($dto->string, $result->string);
         $this->assertIsBool($result->boolean);
+        $this->assertEquals($dto->boolean, $result->boolean);
+
+        $this->assertInstanceOf(DateTime::class, $result->withTransform);
+        $this->assertEquals(new DateTime('2012-01-01'), $result->withTransform);
+
+        $this->assertIsString($result->withReverseTransform);
+        $this->assertEquals((new DateTime('2012-01-01'))->format('Y/m/d'), $result->withReverseTransform);
+
         $this->assertEquals($dto->withOtherDestination, $result->theOtherDestination);
 
         $this->assertNull($result->notMappedProperty);
@@ -73,17 +72,26 @@ final class MappingServiceTest extends TestCase
 
         $targetObject = new DummyTargetObject();
         $targetObject->string = 'just a string';
-        $targetObject->theOtherDestination = 'the other destination to be mapped';
         $targetObject->boolean = true;
         $targetObject->notMappedProperty = 'i must not be mapped';
+        $targetObject->withTransform = new DateTime('2012-01-01');
+        $targetObject->withReverseTransform = (new DateTime('2012-01-01'))->format('Y/m/d');
+        $targetObject->theOtherDestination = 'the other destination to be mapped';
 
         $result = $mappingService->mapFromTarget($targetObject, new DummyMappedObject());
 
         $this->assertInstanceOf(DummyMappedObject::class, $result);
-        $this->assertEquals($targetObject->string, $result->string);
         $this->assertIsString($result->string);
-        $this->assertEquals($targetObject->boolean, $result->boolean);
+        $this->assertEquals($targetObject->string, $result->string);
         $this->assertIsBool($result->boolean);
+        $this->assertEquals($targetObject->boolean, $result->boolean);
+
+        $this->assertIsString($result->withTransform);
+        $this->assertEquals($result->withTransform, (new DateTime('2012-01-01'))->format('Y/m/d'));
+
+        $this->assertInstanceOf(DateTime::class, $result->withReverseTransform);
+        $this->assertEquals(new DateTime('2012-01-01'), $result->withReverseTransform);
+
         $this->assertEquals($targetObject->theOtherDestination, $result->withOtherDestination);
 
         $this->assertEquals('i am not mapped', $result->notMappedProperty);

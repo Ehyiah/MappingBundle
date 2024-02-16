@@ -4,9 +4,10 @@ namespace Ehyiah\MappingBundle;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Ehyiah\MappingBundle\Attributes\MappingAware;
+use Ehyiah\MappingBundle\DependencyInjection\TransformerLocator;
 use Ehyiah\MappingBundle\Exceptions\MappingException;
+use Ehyiah\MappingBundle\Exceptions\MultipleImplementationException;
 use Ehyiah\MappingBundle\Exceptions\NotMappableObject;
-use Ehyiah\MappingBundle\Transformer\TransformerLocator;
 use Psr\Log\LoggerInterface;
 use ReflectionClass;
 use ReflectionException;
@@ -107,8 +108,9 @@ final class MappingService
     /**
      * @return array<mixed>
      *
+     * @throws MultipleImplementationException
+     * @throws NotMappableObject
      * @throws ReflectionException
-     * @throws MappingException
      */
     public function getPropertiesToMap(object $mappedObject): array
     {
@@ -140,6 +142,13 @@ final class MappingService
                     if (null !== $attributeToMap->newInstance()->reverseTransformer) {
                         $mapping['properties'][$property->getName()]['reverseTransformer'] = $attributeToMap->newInstance()->reverseTransformer;
                         $mapping['properties'][$property->getName()]['options'] = $attributeToMap->newInstance()->options;
+                    }
+
+                    if (isset($mapping['properties'][$property->getName()]['transformer'], $mapping['properties'][$property->getName()]['reverseTransformer'])) {
+                        // Because we don't want a property to have both transform and reverseTransform
+                        // because it wouldn't make sense as if a value need a transform/reverseTransform it shouldn't be done in both ways.
+                        // as at least one of the target or source object already have the good value
+                        throw new MultipleImplementationException('A property must only have a Transform OR a reverseTransform');
                     }
                 }
             }
