@@ -11,22 +11,30 @@ use Ehyiah\MappingBundle\Tests\Dummy\DummyTargetObject;
 use Ehyiah\MappingBundle\MappingService;
 use Ehyiah\MappingBundle\Transformer\DateTimeTransformer;
 use Ehyiah\MappingBundle\Transformer\TransformerLocator;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 /**
  * @coversDefaultClass \Ehyiah\MappingBundle\MappingService
  */
-final class MappingServiceTest extends KernelTestCase
+final class MappingServiceTest extends TestCase
 {
     private $entityManager;
-    private $transformerLocator;
     private $logger;
+
+    private function createService(): MappingService
+    {
+        $transformerLocator = $this->createMock(TransformerLocator::class);
+
+        $transformerLocator->method('returnTransformer')->willReturnCallback(fn(string $transformation) => new $transformation());
+        $transformerLocator->method('returnReverseTransformer')->willReturnCallback(fn(string $transformation) => new $transformation());
+
+        return new MappingService($this->entityManager, $transformerLocator, $this->logger);
+    }
 
     protected function setUp(): void
     {
         $this->entityManager = $this->createMock(EntityManagerInterface::class);
-        $this->transformerLocator = $this->createMock(TransformerLocator::class);
         $this->logger = $this->createMock(LoggerInterface::class);
     }
 
@@ -35,12 +43,14 @@ final class MappingServiceTest extends KernelTestCase
      */
     public function testMapToTarget(): void
     {
-        $mappingService = new MappingService($this->entityManager, $this->transformerLocator, $this->logger);
+        $mappingService = $this->createService();
 
         $dto = new DummyMappedObject();
         $dto->string = 'just a string';
         $dto->boolean = true;
         $dto->withOtherDestination = 'the other destination';
+        $dto->withTransform = '2012-01-01';
+        $dto->withReverseTransform = new \DateTime('now');
 
         $result = $mappingService->mapToTarget($dto);
 
@@ -59,7 +69,7 @@ final class MappingServiceTest extends KernelTestCase
      */
     public function testMapFromTarget(): void
     {
-        $mappingService = new MappingService($this->entityManager, $this->transformerLocator, $this->logger);
+        $mappingService = $this->createService();
 
         $targetObject = new DummyTargetObject();
         $targetObject->string = 'just a string';
@@ -84,7 +94,7 @@ final class MappingServiceTest extends KernelTestCase
      */
     public function testGetPropertiesToMap(): void
     {
-        $mappingService = new MappingService($this->entityManager, $this->transformerLocator, $this->logger);
+        $mappingService = $this->createService();
 
         $dto = new DummyMappedObject();
 
@@ -127,7 +137,7 @@ final class MappingServiceTest extends KernelTestCase
      */
     public function testMissingAttributeOnClass(): void
     {
-        $mappingService = new MappingService($this->entityManager, $this->transformerLocator, $this->logger);
+        $mappingService = $this->createService();
 
         $this->expectExceptionObject(new NotMappableObject('Can not automap object, because object is not using Attribute : ' . MappingAware::class));
 

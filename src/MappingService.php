@@ -2,7 +2,6 @@
 
 namespace Ehyiah\MappingBundle;
 
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Ehyiah\MappingBundle\Attributes\MappingAware;
 use Ehyiah\MappingBundle\Exceptions\MappingException;
@@ -26,77 +25,54 @@ final class MappingService
      * @throws ReflectionException
      * @throws MappingException
      */
-    public function mapToTarget(object $mappedObject, ?object $targetObject = null, bool $persist = false, bool $flush = false): object
+    private function map(object $from, ?object $to, object $reference, bool $persist, bool $flush): object
     {
-        $mapping = $this->getPropertiesToMap($mappedObject);
+        $isFrom = $from === $reference;
 
-        if (null === $targetObject) {
-            $targetObject = new $mapping['targetClass']();
+        $modificationCount = 0;
+        $mapping = $this->getPropertiesToMap($reference);
+
+        if (null === $to) {
+            $to = new $mapping['targetClass']();
 
             if (true === $persist) {
-                $this->entityManager->persist($targetObject);
+                $this->entityManager->persist($to);
             }
         }
 
         $propertyAccessor = new PropertyAccessor();
-        $modificationCount = 0;
 
-        foreach ($mapping['properties'] as $name => $path) {
-            $target = $path['target'];
+        foreach ($mapping['properties'] as $mappingName => $path) {
+            $mappingTarget = $path['target'];
 
-            if ($propertyAccessor->isWritable($targetObject, $target)) {
-                if ($propertyAccessor->isReadable($mappedObject, $name)) {
+            $name = $isFrom ? $mappingName : $mappingTarget;
+            $target = $isFrom ? $mappingTarget : $mappingName;
+
+            if ($propertyAccessor->isWritable($to, $target)) {
+                if ($propertyAccessor->isReadable($from, $name)) {
                     if (isset($path['transformer'])) {
                         $transformer = $this->transformationLocator->returnTransformer($path['transformer']);
-                        $value = $transformer->transform($propertyAccessor->getValue($mappedObject, $name), $path['options'], $targetObject, $mappedObject);
+                        $value = $transformer->transform($propertyAccessor->getValue($from, $name), $path['options'], $to, $from);
+                    } elseif (isset($path['reverseTransformer'])) {
+                        $reverseTransformer = $this->transformationLocator->returnReverseTransformer($path['reverseTransformer']);
+                        $value = $reverseTransformer->reverseTransform($propertyAccessor->getValue($from, $name), $path['options'], $to, $from);
                     } else {
-                        $value = $propertyAccessor->getValue($mappedObject, $name);
+                        $value = $propertyAccessor->getValue($from, $name);
                     }
 
-                    if ($value instanceof Collection && isset($path['clearCollection']) && false === $path['clearCollection']) {
-                        $oldValues = $propertyAccessor->getValue($targetObject, $target);
-                        $keep = [];
-                        foreach ($oldValues as $oldValue) {
-                            $keep[$oldValue->getId()] = $oldValue;
-                        }
-
-                        foreach ($value as $v) {
-                            $vMapping = $this->getPropertiesToMap($v);
-                            $newElement = new $vMapping['targetClass']();
-                            $oldId = $propertyAccessor->getValue($v, 'id');
-                            if (null !== $oldId && array_key_exists($oldId, $keep)) {
-                                $newElement = $this->entityManager->getRepository($newElement::class)->findOneBy(['id' => $oldId]);
-                                $newElement = $this->mapToTarget($v, $newElement);
-                                $keep[$oldId] = $newElement;
-                            } elseif (null === $oldId) {
-                                $keep[] = $this->mapToTarget($v, $newElement);
-                            } else {
-                                $this->mappingLogger->alert('try to edit not existing element : ' . $targetObject::class, [
-                                    'target' => $path,
-                                    'dtoPropertyName' => $name,
-                                    'id' => $oldId,
-                                ]);
-                            }
-                        }
-
-                        $propertyAccessor->setValue($targetObject, $target, $keep);
-                    } else {
-                        if (null !== $value) {
-                            $propertyAccessor->setValue($targetObject, $target, $value);
-                        }
-                    }
-
+                    $propertyAccessor->setValue($to, $target, $value);
                     ++$modificationCount;
 
                     $this->mappingLogger->info('Mapping property into target object', [
-                        'targetObject' => $targetObject::class,
+                        'targetObject' => $to::class,
                         'target' => $target,
                         'value' => $value,
                         'withTransform' => (isset($path['transformer'], $transformer)) ? $transformer::class : false,
+                        'withReverseTransformer' => (isset($path['reverseTransformer'], $reverseTransformer)) ? $reverseTransformer::class : false,
                     ]);
                 }
             } else {
-                $this->mappingLogger->alert('try to access not writable property in target object : ' . $targetObject::class, [
+                $this->mappingLogger->alert('try to access not writable property in target object : ' . $to::class, [
                     'targetPath' => $path,
                     'sourceName' => $name,
                 ]);
@@ -107,7 +83,16 @@ final class MappingService
             $this->entityManager->flush();
         }
 
-        return $targetObject;
+        return $to;
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws MappingException
+     */
+    public function mapToTarget(object $mappedObject, ?object $targetObject = null, bool $persist = false, bool $flush = false): object
+    {
+        return $this->map($mappedObject, $targetObject, $mappedObject, $persist, $flush);
     }
 
     /**
@@ -116,41 +101,7 @@ final class MappingService
      */
     public function mapFromTarget(object $targetObject, object $mappedObject): object
     {
-        $mapping = $this->getPropertiesToMap($mappedObject);
-
-        $propertyAccessor = new PropertyAccessor();
-
-        foreach ($mapping['properties'] as $name => $path) {
-            $origin = $path['target'];
-            $target = $name;
-
-            if ($propertyAccessor->isWritable($mappedObject, $target)) {
-                if ($propertyAccessor->isReadable($targetObject, $origin)) {
-                    if (isset($path['reverseTransformer'])) {
-                        $reverseTransformer = $this->transformationLocator->returnReverseTransformer($path['reverseTransformer']);
-                        $value = $reverseTransformer->reverseTransform($propertyAccessor->getValue($targetObject, $origin), $path['options'], $targetObject, $mappedObject);
-                    } else {
-                        $value = $propertyAccessor->getValue($targetObject, $origin);
-                    }
-
-                    $propertyAccessor->setValue($mappedObject, $target, $value);
-
-                    $this->mappingLogger->info('Mapping property into target Object', [
-                        'targetObject' => $mappedObject::class,
-                        'target' => $target,
-                        'value' => $value,
-                        'withReverseTransformer' => (isset($path['reverseTransformer'], $reverseTransformer)) ? $reverseTransformer::class : false,
-                    ]);
-                }
-            } else {
-                $this->mappingLogger->alert('try to access not writable property in target Object : ' . $mappedObject::class, [
-                    'target' => $path,
-                    'sourcePropertyName' => $name,
-                ]);
-            }
-        }
-
-        return $mappedObject;
+        return $this->map($targetObject, $mappedObject, $mappedObject, false, false);
     }
 
     /**
