@@ -9,7 +9,6 @@ class DummyTargetObject
     public string $string;
     public bool $boolean;
     public ?string $notMappedProperty = null;
-    public ?DateTime $withTransform = null;
-    public ?string $withReverseTransform = null;
+    public ?DateTime $date = null;
     public ?string $theOtherDestination = null;
 }

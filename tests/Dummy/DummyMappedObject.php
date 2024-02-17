@@ -17,17 +17,8 @@ class DummyMappedObject
 
     public ?string $notMappedProperty = 'i am not mapped';
 
-    #[MappingAware(transformer: DateTimeTransformer::class)]
-    public ?string $withTransform = null;
-
-    #[MappingAware(transformer: DateTimeTransformer::class, options: ['option1' => 'value1'])]
-    public ?string $withTransformAndOptions = null;
-
-    #[MappingAware(reverseTransformer: DateTimeTransformer::class)]
-    public ?DateTime $withReverseTransform = null;
-
-    #[MappingAware(reverseTransformer: DateTimeTransformer::class, options: ['option1' => 'value1'])]
-    public ?DateTime $withReverseTransformAndOptions = null;
+    #[MappingAware(transformer: DateTimeTransformer::class, reverseTransformer: DateTimeTransformer::class)]
+    public ?string $date = null;
 
     #[MappingAware(target: 'theOtherDestination')]
     public ?string $withOtherDestination = null;

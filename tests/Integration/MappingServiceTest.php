@@ -37,28 +37,26 @@ final class MappingServiceTest extends TestCase
     {
         $mappingService = $this->createService();
 
-        $dto = new DummyMappedObject();
-        $dto->string = 'just a string';
-        $dto->boolean = true;
-        $dto->withTransform = '2012-01-01';
-        $dto->withReverseTransform = new DateTime('2012-01-01');
-        $dto->withOtherDestination = 'the other destination';
+        $mappedObject = new DummyMappedObject();
+        $mappedObject->string = 'just a string';
+        $mappedObject->boolean = true;
+        $mappedObject->date = '2012-01-01';
+        $mappedObject->withOtherDestination = 'the other destination';
 
-        $result = $mappingService->mapToTarget($dto);
+        $result = $mappingService->mapToTarget($mappedObject);
 
         $this->assertInstanceOf(DummyTargetObject::class, $result);
+
         $this->assertIsString($result->string);
-        $this->assertEquals($dto->string, $result->string);
+        $this->assertEquals($mappedObject->string, $result->string);
+
         $this->assertIsBool($result->boolean);
-        $this->assertEquals($dto->boolean, $result->boolean);
+        $this->assertEquals($mappedObject->boolean, $result->boolean);
 
-        $this->assertInstanceOf(DateTime::class, $result->withTransform);
-        $this->assertEquals(new DateTime('2012-01-01'), $result->withTransform);
+        $this->assertInstanceOf(DateTime::class, $result->date);
+        $this->assertEquals(new DateTime('2012-01-01'), $result->date);
 
-        $this->assertIsString($result->withReverseTransform);
-        $this->assertEquals((new DateTime('2012-01-01'))->format('Y/m/d'), $result->withReverseTransform);
-
-        $this->assertEquals($dto->withOtherDestination, $result->theOtherDestination);
+        $this->assertEquals($mappedObject->withOtherDestination, $result->theOtherDestination);
 
         $this->assertNull($result->notMappedProperty);
     }
@@ -74,23 +72,21 @@ final class MappingServiceTest extends TestCase
         $targetObject->string = 'just a string';
         $targetObject->boolean = true;
         $targetObject->notMappedProperty = 'i must not be mapped';
-        $targetObject->withTransform = new DateTime('2012-01-01');
-        $targetObject->withReverseTransform = (new DateTime('2012-01-01'))->format('Y/m/d');
+        $targetObject->date = new DateTime('2012-01-01');
         $targetObject->theOtherDestination = 'the other destination to be mapped';
 
         $result = $mappingService->mapFromTarget($targetObject, new DummyMappedObject());
 
         $this->assertInstanceOf(DummyMappedObject::class, $result);
+
         $this->assertIsString($result->string);
         $this->assertEquals($targetObject->string, $result->string);
+
         $this->assertIsBool($result->boolean);
         $this->assertEquals($targetObject->boolean, $result->boolean);
 
-        $this->assertIsString($result->withTransform);
-        $this->assertEquals($result->withTransform, (new DateTime('2012-01-01'))->format('Y/m/d'));
-
-        $this->assertInstanceOf(DateTime::class, $result->withReverseTransform);
-        $this->assertEquals(new DateTime('2012-01-01'), $result->withReverseTransform);
+        $this->assertIsString($result->date);
+        $this->assertEquals('2012/01/01', $result->date);
 
         $this->assertEquals($targetObject->theOtherDestination, $result->withOtherDestination);
 
@@ -119,22 +115,10 @@ final class MappingServiceTest extends TestCase
         $this->assertEquals('string', $properties['string']['target']);
 
         $this->assertArrayHasKey('boolean', $properties);
-        $this->assertArrayHasKey('withTransform', $properties);
-        $this->assertEquals(DateTimeTransformer::class, $properties['withTransform']['transformer']);
-        $this->assertArrayHasKey('options', $properties['withTransform']);
 
-        $this->assertEquals(DateTimeTransformer::class, $properties['withTransformAndOptions']['transformer']);
-        $this->assertArrayHasKey('options', $properties['withTransformAndOptions']);
-        $this->assertArrayHasKey('option1', $properties['withTransformAndOptions']['options']);
-        $this->assertEquals('value1', $properties['withTransformAndOptions']['options']['option1']);
-
-        $this->assertArrayHasKey('withReverseTransform', $properties);
-        $this->assertEquals(DateTimeTransformer::class, $properties['withReverseTransform']['reverseTransformer']);
-
-        $this->assertEquals(DateTimeTransformer::class, $properties['withReverseTransformAndOptions']['reverseTransformer']);
-        $this->assertArrayHasKey('options', $properties['withReverseTransformAndOptions']);
-        $this->assertArrayHasKey('option1', $properties['withReverseTransformAndOptions']['options']);
-        $this->assertEquals('value1', $properties['withReverseTransformAndOptions']['options']['option1']);
+        $this->assertArrayHasKey('date', $properties);
+        $this->assertEquals(DateTimeTransformer::class, $properties['date']['transformer']);
+        $this->assertArrayHasKey('options', $properties['date']);
 
         $this->assertArrayHasKey('withOtherDestination', $properties);
         $this->assertEquals('theOtherDestination', $properties['withOtherDestination']['target']);

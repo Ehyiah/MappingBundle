@@ -29,7 +29,7 @@ final class DateTimeTransformer implements TransformerInterface, ReverseTransfor
         }
 
         if (!is_string($data)) {
-            throw new WrongDataTypeTransformerException('Data is supposed to be a string to use transform : ' . self::class . ' transformer, ' . gettype($data) . ' provided');
+            throw new WrongDataTypeTransformerException('Data is supposed to be a string to use transform : ' . self::class . ' ' . gettype($data) . ' provided');
         }
 
         return new DateTime($data);
@@ -47,7 +47,7 @@ final class DateTimeTransformer implements TransformerInterface, ReverseTransfor
         }
 
         if (!$data instanceof DateTimeInterface) {
-            throw new WrongDataTypeTransformerException('Data is supposed to be a DateTime Interface to use reverse Transformer : ' . self::class . ' transformer, ' . gettype($data) . ' provided');
+            throw new WrongDataTypeTransformerException('Data is supposed to be a DateTime Interface to use reverse Transformer : ' . self::class . ' ' . gettype($data) . ' provided');
         }
 
         return $data->format('Y/m/d');
