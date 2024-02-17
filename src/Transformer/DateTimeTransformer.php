@@ -22,10 +22,14 @@ final class DateTimeTransformer implements TransformerInterface, ReverseTransfor
      * @throws WrongDataTypeTransformerException
      * @throws Exception
      */
-    public function transform(mixed $data, array $options, object $targetObject, object $mappedObject): DateTime
+    public function transform(mixed $data, array $options, object $targetObject, object $mappedObject): ?DateTime
     {
+        if (null === $data) {
+            return null;
+        }
+
         if (!is_string($data)) {
-            throw new WrongDataTypeTransformerException('Data is supposed to be a string to use transforme : ' . self::class . ' transformer, ' . gettype($data) . ' provided');
+            throw new WrongDataTypeTransformerException('Data is supposed to be a string to use transform : ' . self::class . ' ' . gettype($data) . ' provided');
         }
 
         return new DateTime($data);
@@ -36,10 +40,14 @@ final class DateTimeTransformer implements TransformerInterface, ReverseTransfor
      *
      * @throws WrongDataTypeTransformerException
      */
-    public function reverseTransform(mixed $data, array $options, object $targetObject, object $mappedObject): string
+    public function reverseTransform(mixed $data, array $options, object $targetObject, object $mappedObject): ?string
     {
+        if (null === $data) {
+            return null;
+        }
+
         if (!$data instanceof DateTimeInterface) {
-            throw new WrongDataTypeTransformerException('Data is supposed to be a DateTime Interface to use reverse Transformer : ' . self::class . ' transformer, ' . gettype($data) . ' provided');
+            throw new WrongDataTypeTransformerException('Data is supposed to be a DateTime Interface to use reverse Transformer : ' . self::class . ' ' . gettype($data) . ' provided');
         }
 
         return $data->format('Y/m/d');
