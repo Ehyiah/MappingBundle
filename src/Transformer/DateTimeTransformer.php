@@ -50,6 +50,10 @@ final class DateTimeTransformer implements TransformerInterface, ReverseTransfor
             throw new WrongDataTypeTransformerException('Data is supposed to be a DateTime Interface to use reverse Transformer : ' . self::class . ' ' . gettype($data) . ' provided');
         }
 
+        if (isset($options['format'])) {
+            return $data->format($options['format']);
+        }
+
         return $data->format('Y/m/d');
     }
 }

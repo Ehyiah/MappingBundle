@@ -39,4 +39,18 @@ final class DateTimeTransformerTest extends KernelTestCase
 
         $this->assertEquals('2025/12/12', $result);
     }
+
+    /**
+     * @covers ::transform
+     */
+    public function testReverseTransformWithFormat(): void
+    {
+        $transformer = new DateTimeTransformer();
+
+        $data = new \DateTime('2025/12/12');
+
+        $result = $transformer->reverseTransform($data, ['format' => 'Y-m-d'], new DummyTargetObject(), new DummyMappedObject());
+
+        $this->assertEquals('2025-12-12', $result);
+    }
 }
