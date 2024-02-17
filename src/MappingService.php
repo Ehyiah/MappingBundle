@@ -57,15 +57,15 @@ final class MappingService
 
                     $this->mappingLogger->info('Mapping property into target object', [
                         'targetObject' => $targetObject::class,
-                        'target' => $targetPropertyPath,
+                        'targetPropertyPath' => $targetPropertyPath,
                         'value' => $value,
                         'withTransform' => (isset($targetMappingOptions['transformer'], $transformer)) ? $transformer::class : false,
                     ]);
                 }
             } else {
                 $this->mappingLogger->alert('try to access not writable property in target object : ' . $targetObject::class, [
-                    'targetPath' => $targetMappingOptions,
-                    'sourceName' => $sourcePropertyName,
+                    'targetMappingOptions' => $targetMappingOptions,
+                    'sourcePropertyName' => $sourcePropertyName,
                 ]);
             }
         }
