@@ -41,7 +41,7 @@ final class StringToDateTimeTransformerTest extends KernelTestCase
     }
 
     /**
-     * @covers ::transform
+     * @covers ::reverseTransform
      */
     public function testReverseTransformWithFormat(): void
     {
