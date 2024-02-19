@@ -2,6 +2,7 @@
 
 namespace Ehyiah\MappingBundle\Tests\Unit\Transformers;
 
+use DateTime;
 use Ehyiah\MappingBundle\Tests\Dummy\DummyMappedObject;
 use Ehyiah\MappingBundle\Tests\Dummy\DummyTargetObject;
 use Ehyiah\MappingBundle\Transformer\DateTimeTransformer;
@@ -27,30 +28,44 @@ final class DateTimeTransformerTest extends KernelTestCase
     }
 
     /**
-     * @covers ::reverseTransform
+     * @covers ::transform
      */
-    public function testReverseTransform(): void
+    public function testTransform2(): void
     {
         $transformer = new DateTimeTransformer();
 
-        $data = new \DateTime('2025-12-12');
+        $data = new DateTime('2025-12-12');
 
-        $result = $transformer->reverseTransform($data, [], new DummyTargetObject(), new DummyMappedObject());
+        $result = $transformer->transform($data, [], new DummyTargetObject(), new DummyMappedObject());
 
         $this->assertEquals('2025/12/12', $result);
     }
 
     /**
-     * @covers ::transform
+     * @covers ::reverseTransform
      */
     public function testReverseTransformWithFormat(): void
     {
         $transformer = new DateTimeTransformer();
 
-        $data = new \DateTime('2025/12/12');
+        $data = new DateTime('2025/12/12');
 
         $result = $transformer->reverseTransform($data, ['format' => 'Y-m-d'], new DummyTargetObject(), new DummyMappedObject());
 
         $this->assertEquals('2025-12-12', $result);
+    }
+
+    /**
+     * @covers ::reverseTransform
+     */
+    public function testReverseTransformWithFormat2(): void
+    {
+        $transformer = new DateTimeTransformer();
+
+        $data = '2025-12-12';
+
+        $result = $transformer->reverseTransform($data, ['format' => 'Y-m-d'], new DummyTargetObject(), new DummyMappedObject());
+
+        $this->assertInstanceOf(\DateTimeInterface::class, $result);
     }
 }

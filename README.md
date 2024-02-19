@@ -55,7 +55,7 @@ return [
 ];
 ```
 
-# Usage
+# <u>Usage</u>
 In order to use this bundle, you will need to mark an object (basically a DTO) with the attribute Ehyiah\MappingBundle\Attributes\MappingAware
 
 And in the same class, simply tag every properties you want to map to the target object with the same attribute.
@@ -66,7 +66,7 @@ As the mapping logic is using the propertAccess component, you can specify neste
 
 There is nothing else to do.
 
-## Simple Usage
+## <u>Simple Usage</u>
 
 ```php
     // src/DTO/MyAwesomeDTO
@@ -95,12 +95,12 @@ If you call mapToTarget() in a controller, handler or wherever you need it, the 
 into the properies in the entity and flush them (default value).
 
 
-## Advanced usage
+## <u>Advanced usage</u>
 
-### Transformers
+### <u>Transformers</u>
 
 Sometimes you need to modify data between the objects.
-Example : in your DTO you have a string and need a Datetime in the other object.
+Example : in your SourceObject you have a string and need a Datetime in the TargetObject.
 Or the opposite
 
 Well there is a simple way to do this via the Transformers.
@@ -109,7 +109,9 @@ To create them just create a class and implements TransformerInterface or Revers
 
 Transformers can have 2 methods transform and reverseTransform. and you can pass an array of options that will be used in both.
 
-transform method is used in mapToTarget
+In each methods you have access ot the SourceObject and the TargetObject.
+
+<u>transform</u> method is used in mapToTarget
 
 ```php
     // src/DTO/MyAwesomeDTO
@@ -120,12 +122,13 @@ transform method is used in mapToTarget
     #[MappingAware(target: MyAwesomeEntity::class)]
     class MyAwesomeDTO
     {
-        #[MappingAware(transform: \Ehyiah\MappingBundle\Transformer\DateTimeTransformer::class, options: ['option1' => 'value1'])]
+        #[MappingAware(transform: \Ehyiah\MappingBundle\Transformer\StringToDateTimeTransformer::class, options: ['option1' => 'value1'])]
         public string $date
     }
 ```
 
-reverseTransform method is used in mapFromTarget
+<u>reverseTransform</u> method is used in mapFromTarget
+
 ```php
     // src/DTO/MyAwesomeDTO
 
@@ -135,7 +138,23 @@ reverseTransform method is used in mapFromTarget
     #[MappingAware(target: MyAwesomeEntity::class)]
     class MyAwesomeDTO
     {
-        #[MappingAware(reverseTransform: \Ehyiah\MappingBundle\Transformer\DateTimeTransformer::class, options: ['option1' => 'value1'])]
+        #[MappingAware(reverseTransform: \Ehyiah\MappingBundle\Transformer\StringToDateTimeTransformer::class, options: ['option1' => 'value1'])]
         public string $date
     }
 ```
+
+### <u>Going Further with Transformers</u>
+Transformers can be <u>"open-minded"</u> or <u>"narrow-minded"</u>.
+For a better understanding there is an easy to understand example built-in with ```StringToDateTimeTransformer``` and ```DateTimeTransformer```.
+
+Which one to choose is entierely <u>to your mind</u> !
+
+#### <u>Narrow-minded transformers</u>
+If you pick as examples the ```StringToDateTimeTransformer``` : It is said as a <u>narrow-minded</u> transformer as it will only accept to transform String to DateTime and reverseTransform DateTime to String.
+
+If you try to the the opposite an Exception will be thrown.
+
+#### <u>Open-minded transformers</u>
+If you pick as examples the ```DateTimeTransformer``` : It is said as an <u>open-minded</u> transformer as it will accept :
+- to transform String to DateTime and reverseTransform DateTime to String.
+- but also to transform Datetime to String and reverseTransform String to Datetime.
