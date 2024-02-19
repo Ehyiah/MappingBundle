@@ -11,6 +11,7 @@ use Ehyiah\MappingBundle\MappingService;
 use Ehyiah\MappingBundle\Tests\Dummy\DummyMappedObject;
 use Ehyiah\MappingBundle\Tests\Dummy\DummyMappedObjectWithoutAttribute;
 use Ehyiah\MappingBundle\Tests\Dummy\DummyTargetObject;
+use Ehyiah\MappingBundle\Transformer\DateTimeTransformer;
 use Ehyiah\MappingBundle\Transformer\StringToDateTimeTransformer;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -25,7 +26,6 @@ final class MappingServiceTest extends TestCase
         $transformerLocator = $this->createMock(TransformerLocator::class);
 
         $transformerLocator->method('returnTransformer')->willReturnCallback(fn(string $transformation) => new $transformation());
-        $transformerLocator->method('returnReverseTransformer')->willReturnCallback(fn(string $transformation) => new $transformation());
 
         return new MappingService($this->createMock(EntityManagerInterface::class), $transformerLocator, $this->createMock(LoggerInterface::class));
     }
@@ -117,7 +117,7 @@ final class MappingServiceTest extends TestCase
         $this->assertArrayHasKey('boolean', $properties);
 
         $this->assertArrayHasKey('date', $properties);
-        $this->assertEquals(StringToDateTimeTransformer::class, $properties['date']['transformer']);
+        $this->assertEquals(DateTimeTransformer::class, $properties['date']['transformer']);
         $this->assertArrayHasKey('options', $properties['date']);
 
         $this->assertArrayHasKey('withOtherDestination', $properties);

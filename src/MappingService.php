@@ -92,8 +92,8 @@ final class MappingService
 
             if ($propertyAccessor->isWritable($mappingAwareTargetObject, $sourcePropertyName)) {
                 if ($propertyAccessor->isReadable($sourceObject, $targetPropertyPath)) {
-                    if (isset($targetMappingOptions['reverseTransformer'])) {
-                        $reverseTransformer = $this->transformationLocator->returnReverseTransformer($targetMappingOptions['reverseTransformer']);
+                    if (isset($targetMappingOptions['transformer'])) {
+                        $reverseTransformer = $this->transformationLocator->returnTransformer($targetMappingOptions['transformer']);
                         $value = $reverseTransformer->reverseTransform($propertyAccessor->getValue($sourceObject, $sourcePropertyName), $targetMappingOptions['options'], $sourceObject, $mappingAwareTargetObject);
                     } else {
                         $value = $propertyAccessor->getValue($sourceObject, $targetPropertyPath);
@@ -105,7 +105,7 @@ final class MappingService
                         'targetObject' => $mappingAwareTargetObject::class,
                         'targetPropertyPath' => $targetPropertyPath,
                         'value' => $value,
-                        'withReverseTransformer' => (isset($targetMappingOptions['reverseTransformer'], $reverseTransformer)) ? $reverseTransformer::class : false,
+                        'withReverseTransform' => (isset($targetMappingOptions['transformer'], $reverseTransformer)) ? $reverseTransformer::class : false,
                     ]);
                 }
             } else {
@@ -150,10 +150,6 @@ final class MappingService
 
                     if (null !== $attributeToMap->newInstance()->transformer) {
                         $mapping['properties'][$property->getName()]['transformer'] = $attributeToMap->newInstance()->transformer;
-                        $mapping['properties'][$property->getName()]['options'] = $attributeToMap->newInstance()->options;
-                    }
-                    if (null !== $attributeToMap->newInstance()->reverseTransformer) {
-                        $mapping['properties'][$property->getName()]['reverseTransformer'] = $attributeToMap->newInstance()->reverseTransformer;
                         $mapping['properties'][$property->getName()]['options'] = $attributeToMap->newInstance()->options;
                     }
                 }
