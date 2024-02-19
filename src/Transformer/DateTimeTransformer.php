@@ -4,7 +4,7 @@ namespace Ehyiah\MappingBundle\Transformer;
 
 use DateTime;
 use DateTimeInterface;
-use Ehyiah\MappingBundle\Exceptions\WrongDataTypeTransformerException;
+use Ehyiah\MappingBundle\Exceptions\TransformeException;
 use Ehyiah\MappingBundle\Transformer\Interfaces\ReverseTransformerInterface;
 use Ehyiah\MappingBundle\Transformer\Interfaces\TransformerInterface;
 use Exception;
@@ -19,41 +19,50 @@ final class DateTimeTransformer implements TransformerInterface, ReverseTransfor
     /**
      * @param array<mixed> $options
      *
-     * @throws WrongDataTypeTransformerException
      * @throws Exception
      */
-    public function transform(mixed $data, array $options, object $targetObject, object $mappedObject): ?DateTime
+    public function transform(mixed $data, array $options, object $targetObject, object $mappedObject): DateTime|string|null
     {
         if (null === $data) {
             return null;
         }
 
-        if (!is_string($data)) {
-            throw new WrongDataTypeTransformerException('Data is supposed to be a string to use transform : ' . self::class . ' ' . gettype($data) . ' provided');
-        }
-
-        return new DateTime($data);
+        return $this->executeTransformation($data, $options);
     }
 
     /**
      * @param array<mixed> $options
      *
-     * @throws WrongDataTypeTransformerException
+     * @throws Exception
      */
-    public function reverseTransform(mixed $data, array $options, object $targetObject, object $mappedObject): ?string
+    public function reverseTransform(mixed $data, array $options, object $targetObject, object $mappedObject): DateTime|string|null
     {
         if (null === $data) {
             return null;
         }
 
-        if (!$data instanceof DateTimeInterface) {
-            throw new WrongDataTypeTransformerException('Data is supposed to be a DateTime Interface to use reverse Transformer : ' . self::class . ' ' . gettype($data) . ' provided');
+        return $this->executeTransformation($data, $options);
+    }
+
+    /**
+     * @param array<mixed> $options
+     *
+     * @throws Exception
+     */
+    private function executeTransformation(mixed $data, array $options): DateTime|string
+    {
+        if ($data instanceof DateTimeInterface) {
+            if (isset($options['format'])) {
+                return $data->format($options['format']);
+            }
+
+            return $data->format('Y/m/d');
         }
 
-        if (isset($options['format'])) {
-            return $data->format($options['format']);
+        if (is_string($data)) {
+            return new DateTime($data);
         }
 
-        return $data->format('Y/m/d');
+        throw new TransformeException('Problem while transforming with . ' . self::class);
     }
 }

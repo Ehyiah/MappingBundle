@@ -120,12 +120,13 @@ transform method is used in mapToTarget
     #[MappingAware(target: MyAwesomeEntity::class)]
     class MyAwesomeDTO
     {
-        #[MappingAware(transform: \Ehyiah\MappingBundle\Transformer\DateTimeTransformer::class, options: ['option1' => 'value1'])]
+        #[MappingAware(transform: \Ehyiah\MappingBundle\Transformer\StringToDateTimeTransformer::class, options: ['option1' => 'value1'])]
         public string $date
     }
 ```
 
 reverseTransform method is used in mapFromTarget
+
 ```php
     // src/DTO/MyAwesomeDTO
 
@@ -135,7 +136,7 @@ reverseTransform method is used in mapFromTarget
     #[MappingAware(target: MyAwesomeEntity::class)]
     class MyAwesomeDTO
     {
-        #[MappingAware(reverseTransform: \Ehyiah\MappingBundle\Transformer\DateTimeTransformer::class, options: ['option1' => 'value1'])]
+        #[MappingAware(reverseTransform: \Ehyiah\MappingBundle\Transformer\StringToDateTimeTransformer::class, options: ['option1' => 'value1'])]
         public string $date
     }
 ```
