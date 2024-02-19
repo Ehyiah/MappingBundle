@@ -28,9 +28,9 @@ final class DateTimeTransformerTest extends KernelTestCase
     }
 
     /**
-     * @covers ::reverseTransform
+     * @covers ::transform
      */
-    public function testReverseTransform(): void
+    public function testTransform2(): void
     {
         $transformer = new DateTimeTransformer();
 
@@ -42,7 +42,7 @@ final class DateTimeTransformerTest extends KernelTestCase
     }
 
     /**
-     * @covers ::transform
+     * @covers ::reverseTransform
      */
     public function testReverseTransformWithFormat(): void
     {
@@ -53,5 +53,19 @@ final class DateTimeTransformerTest extends KernelTestCase
         $result = $transformer->reverseTransform($data, ['format' => 'Y-m-d'], new DummyTargetObject(), new DummyMappedObject());
 
         $this->assertEquals('2025-12-12', $result);
+    }
+
+    /**
+     * @covers ::reverseTransform
+     */
+    public function testReverseTransformWithFormat2(): void
+    {
+        $transformer = new DateTimeTransformer();
+
+        $data = '2025-12-12';
+
+        $result = $transformer->reverseTransform($data, ['format' => 'Y-m-d'], new DummyTargetObject(), new DummyMappedObject());
+
+        $this->assertInstanceOf(\DateTimeInterface::class, $result);
     }
 }
