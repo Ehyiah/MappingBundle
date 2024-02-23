@@ -94,9 +94,9 @@ If you call ```mapToTarget()``` function of the service in a controller, handler
 and will put the values stored in the DTO into the properties in the entity and flush them (default value).
 
 
-## <u>Advanced usage</u>
+# <u>Advanced usage</u>
 
-### <u>Transformers</u>
+## <u>Transformers</u>
 
 Sometimes you need to modify data between the objects.
 
@@ -107,10 +107,11 @@ Well there is a simple way to do this via Transformers.
 You can easily create them or use some of prebuilt.
 To create them just create a class and implements ```TransformerInterface```
 
-Transformers will have 2 methods transform and reverseTransform. and you can pass an array of options that will be used in both.
+Transformers will have 2 methods ```transform``` and ```reverseTransform```. and you can pass an array of options that will be used in both.
 
-<u>transform</u> method is used in mapToTarget
-<u>reverseTransform</u> method is used in mapFromTarget
+```transform``` method is used in mapToTarget
+
+```reverseTransform``` method is used in mapFromTarget
 
 In each method you have access ot the SourceObject and the TargetObject.
 
@@ -136,39 +137,35 @@ In each method you have access ot the SourceObject and the TargetObject.
     }
 ```
 
-### <u>Going Further with Transformers</u>
+## <u>Going Further with Transformers</u>
 Transformers can be <u>"open-minded"</u> or <u>"narrow-minded"</u>.
-For a better understanding there is an easy to understand example built-in with ```StringToDateTimeTransformer``` and ```DateTimeTransformer```.
+For a better understanding there is an easy-to-understand example built-in with ```StringToDateTimeTransformer``` and ```DateTimeTransformer```.
 
 Which one to choose is entirely <u>to your mind</u> !
 The only difference between them is how you code the transform and reverseTransform methods.
 
-#### <u>Narrow-minded transformers</u>
+### <u>Narrow-minded transformers</u>
 If you pick as examples the ```StringToDateTimeTransformer``` : It is said as a <u>narrow-minded</u> transformer as it will only accept to transform String to DateTime and reverseTransform DateTime to String.
 
-If you try to the the opposite an Exception will be thrown.
+If you try to do the opposite an Exception will be thrown.
 
-#### <u>Open-minded transformers</u>
+### <u>Open-minded transformers</u>
 If you pick as examples the ```DateTimeTransformer``` : It is said as an <u>open-minded</u> transformer as it will accept :
 - to transform String to DateTime and reverseTransform DateTime to String.
 - but also to transform Datetime to String and reverseTransform String to Datetime.
 
-### List Of built-in Transformers
-#### Open-minded : (do the same in both methods transform and reverseTransform)
+## List Of built-in Transformers
+### Open-minded :
 
-|       Transformer        |                transform                 |             reverseTransform             |
-|:------------------------:|:----------------------------------------:|:----------------------------------------:|
-|   DateTimeTransformer    | string to DateTime or DateTime to string | string to DateTime or DateTime to string |
-|                          |                                          |                                          |
+|       Transformer        |                transform                 |             reverseTransform             |                                                    options                                                    |
+|:------------------------:|:----------------------------------------:|:----------------------------------------:|:-------------------------------------------------------------------------------------------------------------:|
+|   DateTimeTransformer    | string to DateTime or DateTime to string | string to DateTime or DateTime to string | ```format``` (use to transform the string with the provided format)<br/> example  ```'format' => 'Y/m/d'```   |
+|                          |                                          |                                          |                                                                                                               |
 
 
-#### Narrow-minded: (work only in one way)
-* EnumTransformer :   of strings in transform method, and do the opposite in reverseTransform
-* StringToDateTimeTransformer : Transform string to DateTime in transform and do the opposite in reverseTransform
-
-|         Transformer          |                        transform                        |                  reverseTransform                   |
-|:----------------------------:|:-------------------------------------------------------:|:---------------------------------------------------:|
-|       EnumTransformer        | Enum or array of an Enum into string or array of string | string or array of strings to enum or array of enum |
-| StringToDateTimeTransformer  |                     string to DateTime                  |                 DateTime to string                  |
-|                              |                                                         |                                                     |
-
+### Narrow-minded:
+|         Transformer          |                        transform                        |                  reverseTransform                   |                                                     options                                                     |
+|:----------------------------:|:-------------------------------------------------------:|:---------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------:|
+|       EnumTransformer        | Enum or array of an Enum into string or array of string | string or array of strings to enum or array of enum |                    ```enum``` the class of the enum example : ```'enum' => MyEnum::class```                     |
+| StringToDateTimeTransformer  |                     string to DateTime                  |                 DateTime to string                  |   ```format``` (use to transform the string with the provided format)<br/> example  ```'format' => 'Y/m/d'```   |
+|                              |                                                         |                                                     |                                                                                                                 |
