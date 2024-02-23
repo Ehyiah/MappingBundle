@@ -14,7 +14,6 @@ class MappingAware
      *
      * Transformers can be applied when mapping property to Entity or DTO
      * transformer property is to be used when mapping to Entity
-     * reverseTransformer is to be used when mapping to DTO
      * options is an array passed on transformer and reverseTransformer methods if you need to add context or custom options to use in your transformers
      *
      * Custom transformers can easily be created : look at DateTransformer as example to create your own as needed
@@ -22,7 +21,6 @@ class MappingAware
     public function __construct(
         public ?string $target = null,
         public ?string $transformer = null,
-        public ?string $reverseTransformer = null,
         /** @var array<mixed> */
         public array $options = [],
     ) {

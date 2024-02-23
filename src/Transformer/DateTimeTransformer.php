@@ -5,11 +5,10 @@ namespace Ehyiah\MappingBundle\Transformer;
 use DateTime;
 use DateTimeInterface;
 use Ehyiah\MappingBundle\Exceptions\TransformeException;
-use Ehyiah\MappingBundle\Transformer\Interfaces\ReverseTransformerInterface;
 use Ehyiah\MappingBundle\Transformer\Interfaces\TransformerInterface;
 use Exception;
 
-final class DateTimeTransformer implements TransformerInterface, ReverseTransformerInterface
+final class DateTimeTransformer implements TransformerInterface
 {
     public function transformationSupports(): string
     {

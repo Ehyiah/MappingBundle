@@ -4,10 +4,9 @@ namespace Ehyiah\MappingBundle\Transformer;
 
 use Ehyiah\MappingBundle\Exceptions\ReverseTransformeException;
 use Ehyiah\MappingBundle\Exceptions\WrongDataTypeTransformerException;
-use Ehyiah\MappingBundle\Transformer\Interfaces\ReverseTransformerInterface;
 use Ehyiah\MappingBundle\Transformer\Interfaces\TransformerInterface;
 
-final class EnumTransformer implements TransformerInterface, ReverseTransformerInterface
+final class EnumTransformer implements TransformerInterface
 {
     public function transformationSupports(): string
     {
