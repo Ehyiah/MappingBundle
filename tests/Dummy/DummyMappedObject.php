@@ -2,9 +2,8 @@
 
 namespace Ehyiah\MappingBundle\Tests\Dummy;
 
-use DateTime;
 use Ehyiah\MappingBundle\Attributes\MappingAware;
-use Ehyiah\MappingBundle\Transformer\StringToDateTimeTransformer;
+use Ehyiah\MappingBundle\Transformer\DateTimeTransformer;
 
 #[MappingAware(target: DummyTargetObject::class)]
 class DummyMappedObject
@@ -17,7 +16,7 @@ class DummyMappedObject
 
     public ?string $notMappedProperty = 'i am not mapped';
 
-    #[MappingAware(transformer: StringToDateTimeTransformer::class, reverseTransformer: StringToDateTimeTransformer::class)]
+    #[MappingAware(transformer: DateTimeTransformer::class)]
     public ?string $date = null;
 
     #[MappingAware(target: 'theOtherDestination')]

@@ -16,4 +16,9 @@ interface TransformerInterface
      * @param array<mixed> $options
      */
     public function transform(mixed $data, array $options, object $targetObject, object $mappedObject): mixed;
+
+    /**
+     * @param array<mixed> $options
+     */
+    public function reverseTransform(mixed $data, array $options, object $targetObject, object $mappedObject): mixed;
 }
