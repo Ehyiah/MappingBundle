@@ -5,14 +5,14 @@ namespace Ehyiah\MappingBundle\Tests\Unit\Transformers;
 use Ehyiah\MappingBundle\Exceptions\TransformeException;
 use Ehyiah\MappingBundle\Tests\Dummy\DummyMappedObject;
 use Ehyiah\MappingBundle\Tests\Dummy\DummyTargetObject;
-use Ehyiah\MappingBundle\Transformer\StringToBooleanTransformer;
+use Ehyiah\MappingBundle\Transformer\BooleanTransformer;
 use Generator;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 /**
- * @coversDefaultClass \Ehyiah\MappingBundle\Transformer\StringToBooleanTransformer
+ * @coversDefaultClass \Ehyiah\MappingBundle\Transformer\BooleanTransformer
  */
-final class StringToBooleanTransformerTest extends KernelTestCase
+final class BooleanTransformerTest extends KernelTestCase
 {
     /**
      * @dataProvider provideTransformCases
@@ -21,7 +21,7 @@ final class StringToBooleanTransformerTest extends KernelTestCase
      */
     public function testTransform(string|int $data, bool $expected, array $options = [], $exception = false): void
     {
-        $transformer = new StringToBooleanTransformer();
+        $transformer = new BooleanTransformer();
 
         if ($exception) {
             $this->expectExceptionObject(new TransformeException('Can not transform to boolean value : ' . $data));
@@ -29,7 +29,7 @@ final class StringToBooleanTransformerTest extends KernelTestCase
 
         $result = $transformer->transform($data, $options, new DummyTargetObject(), new DummyMappedObject());
 
-        $this->assertEquals($result, $expected);
+        $this->assertEquals($expected, $result);
     }
 
     public static function provideTransformCases(): Generator
@@ -49,7 +49,7 @@ final class StringToBooleanTransformerTest extends KernelTestCase
      */
     public function testReverseTransform(bool $data, mixed $expectedResult, array $options = []): void
     {
-        $transformer = new StringToBooleanTransformer();
+        $transformer = new BooleanTransformer();
 
         $result = $transformer->reverseTransform($data, $options, new DummyTargetObject(), new DummyMappedObject());
 

@@ -12,7 +12,6 @@ use Ehyiah\MappingBundle\Tests\Dummy\DummyMappedObject;
 use Ehyiah\MappingBundle\Tests\Dummy\DummyMappedObjectWithoutAttribute;
 use Ehyiah\MappingBundle\Tests\Dummy\DummyTargetObject;
 use Ehyiah\MappingBundle\Transformer\DateTimeTransformer;
-use Ehyiah\MappingBundle\Transformer\StringToDateTimeTransformer;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -25,7 +24,7 @@ final class MappingServiceTest extends TestCase
     {
         $transformerLocator = $this->createMock(TransformerLocator::class);
 
-        $transformerLocator->method('returnTransformer')->willReturnCallback(fn(string $transformation) => new $transformation());
+        $transformerLocator->method('returnTransformer')->willReturnCallback(fn (string $transformation) => new $transformation());
 
         return new MappingService($this->createMock(EntityManagerInterface::class), $transformerLocator, $this->createMock(LoggerInterface::class));
     }

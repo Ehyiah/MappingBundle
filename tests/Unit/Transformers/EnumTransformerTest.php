@@ -28,8 +28,8 @@ final class EnumTransformerTest extends KernelTestCase
         $data = [DummyEnum::ENUM_1, DummyEnum::ENUM_2];
         $result = $transformer->transform($data, ['enum' => DummyEnum::class], new DummyTargetObject(), new DummyMappedObject());
         $this->assertIsArray($result);
-        $this->assertContains('enum_value_1',$result);
-        $this->assertContains('enum_value_2',$result);
+        $this->assertContains('enum_value_1', $result);
+        $this->assertContains('enum_value_2', $result);
     }
 
     /**

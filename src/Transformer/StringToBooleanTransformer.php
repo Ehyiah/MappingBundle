@@ -44,7 +44,7 @@ final class StringToBooleanTransformer implements TransformerInterface
      *
      * @throws Exception
      */
-    public function reverseTransform(mixed $data, array $options, object $targetObject, object $mappedObject): string|null
+    public function reverseTransform(mixed $data, array $options, object $targetObject, object $mappedObject): string|int|null
     {
         if (null === $data) {
             return null;
