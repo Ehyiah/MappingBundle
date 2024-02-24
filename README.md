@@ -164,8 +164,9 @@ If you pick as examples the ```DateTimeTransformer``` : It is said as an <u>open
 
 
 ### Narrow-minded:
-|         Transformer          |                        transform                        |                  reverseTransform                   |                                                     options                                                     |
-|:----------------------------:|:-------------------------------------------------------:|:---------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------:|
-|       EnumTransformer        | Enum or array of an Enum into string or array of string | string or array of strings to enum or array of enum |                    ```enum``` the class of the enum example : ```'enum' => MyEnum::class```                     |
-| StringToDateTimeTransformer  |                     string to DateTime                  |                 DateTime to string                  |   ```format``` (use to transform the string with the provided format)<br/> example  ```'format' => 'Y/m/d'```   |
-|                              |                                                         |                                                     |                                                                                                                 |
+|         Transformer         |                        transform                        |                  reverseTransform                   |                                                     options                                                     |
+|:---------------------------:|:-------------------------------------------------------:|:---------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------:|
+|       EnumTransformer       | Enum or array of an Enum into string or array of string | string or array of strings to enum or array of enum |                    ```enum``` the class of the enum example : ```'enum' => MyEnum::class```                     |
+| StringToDateTimeTransformer |                   string to DateTime                    |                 DateTime to string                  |   ```format``` (use to transform the string with the provided format)<br/> example  ```'format' => 'Y/m/d'```   |
+| StringToBooleanTransformer  |                    string to Boolean                    |                  Boolean to string                  | ```trueValue``` or ```falseValue``` (used in reverseTransform only)    ```'trueValue' => 'MyCustomTrueValue'``` |
+|                             |                                                         |                                                     |                                                                                                                 |
