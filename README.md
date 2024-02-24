@@ -157,11 +157,11 @@ If you pick as examples the ```DateTimeTransformer``` : It is said as an <u>open
 ## List Of built-in Transformers
 ### Open-minded :
 
-|     Transformer     |                     transform                     |                 reverseTransform                  |                                                                        options                                                                         |
-|:-------------------:|:-------------------------------------------------:|:-------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| DateTimeTransformer |     string to DateTime or DateTime to string      |     string to DateTime or DateTime to string      |                      ```format``` (use to transform the string with the provided format)<br/> example  ```'format' => 'Y/m/d'```                       |
-| BooleanTransformer  | string\|int to boolean or boolean to string\|int  | string\|int to boolean or boolean to string\|int  | ```trueValue``` or ```falseValue``` (used in reverseTransform only)    ```'trueValue' => 'MyCustomTrueValue'```<br/><br/> ```strict``` : true or false |
-|                     |                                                   |                                                   |                                                                                                                                                        |
+|     Transformer     |                     transform                     |                 reverseTransform                  |                                                            options                                                             |
+|:-------------------:|:-------------------------------------------------:|:-------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------------------:|
+| DateTimeTransformer |     string to DateTime or DateTime to string      |     string to DateTime or DateTime to string      |          ```format``` (use to transform the string with the provided format)<br/> example  ```'format' => 'Y/m/d'```           |
+| BooleanTransformer  | string\|int to boolean or boolean to string\|int  | string\|int to boolean or boolean to string\|int  | ```trueValue``` or ```falseValue``` example: ```'trueValue' => 'MyCustomTrueValue'```<br/><br/> ```strict``` : true or false   |
+|                     |                                                   |                                                   |                                                                                                                                |
 
 
 ### Narrow-minded:
