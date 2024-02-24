@@ -18,6 +18,7 @@ final class BooleanTransformerTest extends KernelTestCase
      * @dataProvider provideTransformCases
      *
      * @covers ::transform
+     * @covers ::reverseTransform
      */
     public function testTransform(string|int $data, bool $expected, array $options = [], $exception = false): void
     {
@@ -28,6 +29,10 @@ final class BooleanTransformerTest extends KernelTestCase
         }
 
         $result = $transformer->transform($data, $options, new DummyTargetObject(), new DummyMappedObject());
+
+        $this->assertEquals($expected, $result);
+
+        $result = $transformer->reverseTransform($data, $options, new DummyTargetObject(), new DummyMappedObject());
 
         $this->assertEquals($expected, $result);
     }
@@ -46,12 +51,17 @@ final class BooleanTransformerTest extends KernelTestCase
      * @dataProvider provideReserveTransformCases
      *
      * @covers ::reverseTransform
+     * @covers ::transform
      */
     public function testReverseTransform(bool $data, mixed $expectedResult, array $options = []): void
     {
         $transformer = new BooleanTransformer();
 
         $result = $transformer->reverseTransform($data, $options, new DummyTargetObject(), new DummyMappedObject());
+
+        $this->assertEquals($expectedResult, $result);
+
+        $result = $transformer->transform($data, $options, new DummyTargetObject(), new DummyMappedObject());
 
         $this->assertEquals($expectedResult, $result);
     }
