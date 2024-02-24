@@ -3,6 +3,7 @@
 namespace Ehyiah\MappingBundle\Tests\Unit\Transformers;
 
 use DateTime;
+use DateTimeInterface;
 use Ehyiah\MappingBundle\Tests\Dummy\DummyMappedObject;
 use Ehyiah\MappingBundle\Tests\Dummy\DummyTargetObject;
 use Ehyiah\MappingBundle\Transformer\DateTimeTransformer;
@@ -24,7 +25,7 @@ final class DateTimeTransformerTest extends KernelTestCase
 
         $result = $transformer->transform($data, [], new DummyTargetObject(), new DummyMappedObject());
 
-        $this->assertInstanceOf(\DateTimeInterface::class, $result);
+        $this->assertInstanceOf(DateTimeInterface::class, $result);
     }
 
     /**
@@ -66,6 +67,6 @@ final class DateTimeTransformerTest extends KernelTestCase
 
         $result = $transformer->reverseTransform($data, ['format' => 'Y-m-d'], new DummyTargetObject(), new DummyMappedObject());
 
-        $this->assertInstanceOf(\DateTimeInterface::class, $result);
+        $this->assertInstanceOf(DateTimeInterface::class, $result);
     }
 }
