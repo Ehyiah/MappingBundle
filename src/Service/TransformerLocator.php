@@ -1,6 +1,6 @@
 <?php
 
-namespace Ehyiah\MappingBundle\DependencyInjection;
+namespace Ehyiah\MappingBundle\Service;
 
 use Ehyiah\MappingBundle\Exceptions\MultipleTransformerException;
 use Ehyiah\MappingBundle\Exceptions\TransformerNotFoundException;

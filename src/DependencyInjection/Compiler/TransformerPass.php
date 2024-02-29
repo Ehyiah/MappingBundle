@@ -2,7 +2,7 @@
 
 namespace Ehyiah\MappingBundle\DependencyInjection\Compiler;
 
-use Ehyiah\MappingBundle\DependencyInjection\TransformerLocator;
+use Ehyiah\MappingBundle\Service\TransformerLocator;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;

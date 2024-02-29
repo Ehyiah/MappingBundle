@@ -4,9 +4,9 @@ namespace Ehyiah\MappingBundle;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Ehyiah\MappingBundle\Attributes\MappingAware;
-use Ehyiah\MappingBundle\DependencyInjection\TransformerLocator;
 use Ehyiah\MappingBundle\Exceptions\MappingException;
 use Ehyiah\MappingBundle\Exceptions\NotMappableObject;
+use Ehyiah\MappingBundle\Service\TransformerLocator;
 use Psr\Log\LoggerInterface;
 use ReflectionClass;
 use ReflectionException;
