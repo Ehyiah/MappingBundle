@@ -12,5 +12,22 @@
             <argument type="service" id="Ehyiah\MappingBundle\Service\TransformerLocator"/>
             <argument type="service" id="monolog.logger.mapping"/>
         </service>
+
+        <service id="Ehyiah\MappingBundle\Transformer\BooleanTransformer">
+            <tag name="ehyiah.mapping_bundle.transformer" />
+        </service>
+        <service id="Ehyiah\MappingBundle\Transformer\EnumTransformer">
+            <tag name="ehyiah.mapping_bundle.transformer" />
+        </service>
+        <service id="Ehyiah\MappingBundle\Transformer\DateTimeTransformer">
+            <tag name="ehyiah.mapping_bundle.transformer" />
+        </service>
+
+        <service id="Ehyiah\MappingBundle\Transformer\StringToDateTimeTransformer">
+            <tag name="ehyiah.mapping_bundle.transformer" />
+        </service>
+        <service id="Ehyiah\MappingBundle\Transformer\StringToBooleanTransformer">
+            <tag name="ehyiah.mapping_bundle.transformer" />
+        </service>
     </services>
 </container>
