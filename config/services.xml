@@ -13,12 +13,20 @@
             <argument type="service" id="monolog.logger.mapping"/>
         </service>
 
-<!--        <instanceof public="true" id="Ehyiah\MappingBundle\Transformer\Interfaces\TransformerInterface" autowire="true">-->
-<!--            &lt;!&ndash; services whose classes are instances of CustomInterface will be tagged automatically &ndash;&gt;-->
-<!--            <tag name="ehyiah.mapping_bundle.transformer"/>-->
-<!--        </instanceof>-->
-
+        <service id="Ehyiah\MappingBundle\Transformer\BooleanTransformer">
+            <tag name="ehyiah.mapping_bundle.transformer" />
+        </service>
         <service id="Ehyiah\MappingBundle\Transformer\EnumTransformer">
+            <tag name="ehyiah.mapping_bundle.transformer" />
+        </service>
+        <service id="Ehyiah\MappingBundle\Transformer\DateTimeTransformer">
+            <tag name="ehyiah.mapping_bundle.transformer" />
+        </service>
+
+        <service id="Ehyiah\MappingBundle\Transformer\StringToDateTimeTransformer">
+            <tag name="ehyiah.mapping_bundle.transformer" />
+        </service>
+        <service id="Ehyiah\MappingBundle\Transformer\StringToBooleanTransformer">
             <tag name="ehyiah.mapping_bundle.transformer" />
         </service>
     </services>
