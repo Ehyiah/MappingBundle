@@ -29,5 +29,8 @@
         <service id="Ehyiah\MappingBundle\Transformer\StringToBooleanTransformer">
             <tag name="ehyiah.mapping_bundle.transformer" />
         </service>
+        <service id="Ehyiah\MappingBundle\Transformer\StringToEnumTransformer">
+            <tag name="ehyiah.mapping_bundle.transformer" />
+        </service>
     </services>
 </container>
