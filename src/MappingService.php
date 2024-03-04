@@ -94,7 +94,7 @@ final class MappingService
                 if ($propertyAccessor->isReadable($sourceObject, $targetPropertyPath)) {
                     if (isset($targetMappingOptions['transformer'])) {
                         $reverseTransformer = $this->transformationLocator->returnTransformer($targetMappingOptions['transformer']);
-                        $value = $reverseTransformer->reverseTransform($propertyAccessor->getValue($sourceObject, $sourcePropertyName), $targetMappingOptions['options'], $sourceObject, $mappingAwareTargetObject);
+                        $value = $reverseTransformer->reverseTransform($propertyAccessor->getValue($sourceObject, $targetPropertyPath), $targetMappingOptions['options'], $sourceObject, $mappingAwareTargetObject);
                     } else {
                         $value = $propertyAccessor->getValue($sourceObject, $targetPropertyPath);
                     }
