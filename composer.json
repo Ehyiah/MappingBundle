@@ -18,10 +18,10 @@
     ],
     "require": {
         "php": ">=8.1",
-        "doctrine/orm": "^2.14",
+        "doctrine/orm": "^2.10",
         "symfony/property-access": "^6.1|^7.0",
-        "symfony/monolog-bundle": "^3.8",
-        "symfony/yaml": "^6.1"
+        "symfony/monolog-bundle": "^3.1",
+        "symfony/yaml": "^6.1|^7.0"
     },
     "require-dev": {
         "symfony/console": "^7.0|^6.1",
