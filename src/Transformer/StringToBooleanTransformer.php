@@ -21,7 +21,7 @@ final class StringToBooleanTransformer implements TransformerInterface
      *
      * @throws Exception
      */
-    public function transform(mixed $data, array $options, object $targetObject, object $mappedObject): bool|null
+    public function transform(mixed $data, array $options, object $targetObject, object $mappedObject): ?bool
     {
         if (null === $data) {
             return null;
