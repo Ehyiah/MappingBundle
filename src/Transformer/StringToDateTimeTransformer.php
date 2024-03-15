@@ -31,7 +31,11 @@ final class StringToDateTimeTransformer implements TransformerInterface
             throw new WrongDataTypeTransformerException('Data is supposed to be a string to use transform : ' . self::class . ' ' . gettype($data) . ' provided');
         }
 
-        return new DateTime($data);
+        if (isset($options['timezone'])) {
+            $timezone = $options['timezone'];
+        }
+
+        return new DateTime($data, $timezone ?? null);
     }
 
     /**

@@ -4,6 +4,7 @@ namespace Ehyiah\MappingBundle\Tests\Unit\Transformers;
 
 use DateTime;
 use DateTimeInterface;
+use DateTimeZone;
 use Ehyiah\MappingBundle\Tests\Dummy\DummyMappedObject;
 use Ehyiah\MappingBundle\Tests\Dummy\DummyTargetObject;
 use Ehyiah\MappingBundle\Transformer\StringToDateTimeTransformer;
@@ -26,6 +27,30 @@ final class StringToDateTimeTransformerTest extends KernelTestCase
         $result = $transformer->transform($data, [], new DummyTargetObject(), new DummyMappedObject());
 
         $this->assertInstanceOf(DateTimeInterface::class, $result);
+    }
+
+    /**
+     * @covers ::transform
+     */
+    public function testTransformWithDateTimeZone(): void
+    {
+        $transformer = new StringToDateTimeTransformer();
+
+        $data = '2025-12-12';
+
+        $result = $transformer->transform($data, ['timezone' => new DateTimeZone('UTC')], new DummyTargetObject(), new DummyMappedObject());
+
+        $timezone = $result->getTimezone()->getName();
+
+        $this->assertInstanceOf(DateTimeInterface::class, $result);
+        $this->assertSame('UTC', $timezone);
+
+        $result = $transformer->transform($data, ['timezone' => new DateTimeZone('Europe/Tallinn')], new DummyTargetObject(), new DummyMappedObject());
+
+        $timezone = $result->getTimezone()->getName();
+
+        $this->assertInstanceOf(DateTimeInterface::class, $result);
+        $this->assertSame('Europe/Tallinn', $timezone);
     }
 
     /**
