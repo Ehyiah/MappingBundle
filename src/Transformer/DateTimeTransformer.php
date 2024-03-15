@@ -59,7 +59,11 @@ final class DateTimeTransformer implements TransformerInterface
         }
 
         if (is_string($data)) {
-            return new DateTime($data);
+            if (isset($options['timezone'])) {
+                $timezone = $options['timezone'];
+            }
+
+            return new DateTime($data, $timezone ?? null);
         }
 
         throw new TransformeException('Problem while transforming with . ' . self::class);
