@@ -21,7 +21,6 @@ final class EnumTransformerTest extends KernelTestCase
         $transformer = new EnumTransformer();
 
         $data = DummyEnum::ENUM_1;
-
         $result = $transformer->transform($data, ['enum' => DummyEnum::class], new DummyTargetObject(), new DummyMappedObject());
         $this->assertEquals('enum_value_1', $result);
 
@@ -30,6 +29,18 @@ final class EnumTransformerTest extends KernelTestCase
         $this->assertIsArray($result);
         $this->assertContains('enum_value_1', $result);
         $this->assertContains('enum_value_2', $result);
+
+        $data = 'enum_value_2';
+        $result = $transformer->transform($data, ['enum' => DummyEnum::class], new DummyTargetObject(), new DummyMappedObject());
+        $this->assertInstanceOf(DummyEnum::class, $result);
+        $this->assertEquals(DummyEnum::ENUM_2, $result);
+
+        $data = ['enum_value_2', 'enum_value_1'];
+        $result = $transformer->transform($data, ['enum' => DummyEnum::class], new DummyTargetObject(), new DummyMappedObject());
+        $this->assertCount(2, $result);
+        foreach ($result as $r) {
+            $this->assertInstanceOf(DummyEnum::class, $r);
+        }
     }
 
     /**
@@ -40,9 +51,7 @@ final class EnumTransformerTest extends KernelTestCase
         $transformer = new EnumTransformer();
 
         $data = ['enum_value_2', 'enum_value_1'];
-
         $result = $transformer->reverseTransform($data, ['enum' => DummyEnum::class], new DummyTargetObject(), new DummyMappedObject());
-
         $this->assertCount(2, $result);
         foreach ($result as $r) {
             $this->assertInstanceOf(DummyEnum::class, $r);
@@ -56,5 +65,15 @@ final class EnumTransformerTest extends KernelTestCase
         $data = 'invalid_value';
         $result = $transformer->reverseTransform($data, ['enum' => DummyEnum::class], new DummyTargetObject(), new DummyMappedObject());
         $this->assertNull($result);
+
+        $data = DummyEnum::ENUM_1;
+        $result = $transformer->reverseTransform($data, ['enum' => DummyEnum::class], new DummyTargetObject(), new DummyMappedObject());
+        $this->assertEquals('enum_value_1', $result);
+
+        $data = [DummyEnum::ENUM_1, DummyEnum::ENUM_2];
+        $result = $transformer->reverseTransform($data, ['enum' => DummyEnum::class], new DummyTargetObject(), new DummyMappedObject());
+        $this->assertIsArray($result);
+        $this->assertContains('enum_value_1', $result);
+        $this->assertContains('enum_value_2', $result);
     }
 }
