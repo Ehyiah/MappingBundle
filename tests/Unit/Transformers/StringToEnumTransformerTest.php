@@ -20,10 +20,25 @@ final class StringToEnumTransformerTest extends KernelTestCase
     {
         $transformer = new StringToEnumTransformer();
 
-        $data = DummyEnum::ENUM_1;
+        $data = ['enum_value_2', 'enum_value_1'];
 
         $result = $transformer->transform($data, ['enum' => DummyEnum::class], new DummyTargetObject(), new DummyMappedObject());
-        $this->assertEquals($data, $result);
+
+        $this->assertCount(2, $result);
+        foreach ($result as $r) {
+            $this->assertInstanceOf(DummyEnum::class, $r);
+        }
+
+        $data = 'enum_value_2';
+        $result = $transformer->transform($data, ['enum' => DummyEnum::class], new DummyTargetObject(), new DummyMappedObject());
+
+        $this->assertInstanceOf(DummyEnum::class, $result);
+        $this->assertEquals(DummyEnum::ENUM_2, $result);
+
+        $data = 'invalid_value';
+        $result = $transformer->transform($data, ['enum' => DummyEnum::class], new DummyTargetObject(), new DummyMappedObject());
+
+        $this->assertNull($result);
     }
 
     /**
@@ -33,22 +48,26 @@ final class StringToEnumTransformerTest extends KernelTestCase
     {
         $transformer = new StringToEnumTransformer();
 
-        $data = ['enum_value_2', 'enum_value_1'];
-
+        $data = DummyEnum::ENUM_1;
         $result = $transformer->reverseTransform($data, ['enum' => DummyEnum::class], new DummyTargetObject(), new DummyMappedObject());
 
-        $this->assertCount(2, $result);
-        foreach ($result as $r) {
-            $this->assertInstanceOf(DummyEnum::class, $r);
-        }
+        $this->assertEquals($data->value, $result);
 
-        $data = 'enum_value_2';
-        $result = $transformer->reverseTransform($data, ['enum' => DummyEnum::class], new DummyTargetObject(), new DummyMappedObject());
-        $this->assertInstanceOf(DummyEnum::class, $result);
-        $this->assertEquals(DummyEnum::ENUM_2, $result);
+        $data = DummyEnum::ENUM_1;
+        $result = $transformer->reverseTransform($data, ['enum' => DummyEnum::class, 'return' => StringToEnumTransformer::RETURN_NAME], new DummyTargetObject(), new DummyMappedObject());
 
-        $data = 'invalid_value';
+        $this->assertEquals($data->name, $result);
+
+        $data = [DummyEnum::ENUM_1, DummyEnum::ENUM_2, DummyEnum::ENUM_1];
         $result = $transformer->reverseTransform($data, ['enum' => DummyEnum::class], new DummyTargetObject(), new DummyMappedObject());
-        $this->assertNull($result);
+
+        $this->assertIsArray($result);
+        $this->assertEquals(['enum_value_1', 'enum_value_2', 'enum_value_1'], $result);
+
+        $data = [DummyEnum::ENUM_1, DummyEnum::ENUM_2, DummyEnum::ENUM_1];
+        $result = $transformer->reverseTransform($data, ['enum' => DummyEnum::class, 'return' => StringToEnumTransformer::RETURN_NAME], new DummyTargetObject(), new DummyMappedObject());
+
+        $this->assertIsArray($result);
+        $this->assertEquals(['ENUM_1', 'ENUM_2', 'ENUM_1'], $result);
     }
 }

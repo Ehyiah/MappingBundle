@@ -56,3 +56,4 @@
 .env.local
 docker-compose.override.yaml
 /.phpunit.cache/
+/.phpunit.result.cache
