@@ -54,13 +54,6 @@ final class MappingService
 
                     $propertyAccessor->setValue($targetObject, $targetPropertyPath, $value);
                     ++$modificationCount;
-
-                    $this->mappingLogger->info('Mapping property into target object', [
-                        'targetObject' => $targetObject::class,
-                        'targetPropertyPath' => $targetPropertyPath,
-                        'value' => $value,
-                        'withTransform' => (isset($targetMappingOptions['transformer'], $transformer)) ? $transformer::class : false,
-                    ]);
                 }
             } else {
                 $this->mappingLogger->alert('try to access not writable property in target object : ' . $targetObject::class, [
@@ -100,13 +93,6 @@ final class MappingService
                     }
 
                     $propertyAccessor->setValue($mappingAwareTargetObject, $sourcePropertyName, $value);
-
-                    $this->mappingLogger->info('Mapping property into target Object', [
-                        'targetObject' => $mappingAwareTargetObject::class,
-                        'targetPropertyPath' => $targetPropertyPath,
-                        'value' => $value,
-                        'withReverseTransform' => (isset($targetMappingOptions['transformer'], $reverseTransformer)) ? $reverseTransformer::class : false,
-                    ]);
                 }
             } else {
                 $this->mappingLogger->alert('try to access not writable property in target Object : ' . $mappingAwareTargetObject::class, [
