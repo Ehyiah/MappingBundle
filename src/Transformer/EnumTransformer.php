@@ -53,7 +53,7 @@ final class EnumTransformer implements TransformerInterface
         }
 
         if (is_array($data)) {
-            if (is_string($data[0])) {
+            if (isset($data[0]) && is_string($data[0])) {
                 return array_map(fn ($item) => $enumClass::tryFrom($item), $data);
             }
 
