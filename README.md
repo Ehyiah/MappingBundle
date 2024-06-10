@@ -67,6 +67,7 @@ As the mapping logic is using the propertyAccess component, you can specify nest
 
 ## <u>Simple Usage</u>
 
+1 - Create a DTO that will 'hold' the mapping logic
 ```php
     // src/DTO/MyAwesomeDTO
 
@@ -90,11 +91,45 @@ As the mapping logic is using the propertyAccess component, you can specify nest
     }
 ```
 
-If you call ```mapToTarget()``` function of the service in a controller, handler or wherever you need it, the service will take properties tagged with MappingAware attribute
+2 - Inject the ```MappingServiceInterface``` into your code, and call the methods.
+
+```php
+    use App\src\Entity\MyAwesomeEntity;
+    use App\src\DTO\MyAwesomeDTO;
+    use Ehyiah\MappingBundle\Attributes;
+    use Ehyiah\MappingBundle\MappingServiceInterface;
+    
+    class SomeUsefulServiceOrHandlerOrController
+    {
+        public function __construct(
+            private MappingServiceInterface $mappingService,
+        ) {
+        }
+
+        public function handle()
+        {
+            $entity = new MyAwesomeEntity();
+            $dto = new MyAwesomeDTO();
+            
+            $this->mappingService->mapToTarget($dto, $entity);
+            $this->mappingService->mapFromTarget($entity, $dto);
+        }
+    }
+```
+If you call ```mapToTarget()``` function of the service tagged with ```MappingServiceInterface``` in a controller, handler or wherever you need it, the service will take properties tagged with MappingAware attribute
 and will put the values stored in the DTO into the properties in the entity and flush them (default value).
 
 
 # <u>Advanced usage</u>
+
+## <u>Replace the Built-in service</u>
+A Default service implementing ```MappingServiceInterface``` exist in the bundle. But you may need to create a service that implements the ```MappingServiceInterface``` to replace the default built-in.
+
+### Create your own service
+To create your own service :
+- Just create a service that implements the ```MappingServiceInterface```, there is nothing more to do, no need to register or override the default built-in. The compiler pass do the work for you.
+- In this service you will handle the logic yourself.
+- Of course you can take the basis methods of the default service and modify them to your needs inside your custom service.
 
 ## <u>Transformers</u>
 
