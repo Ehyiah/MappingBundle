@@ -56,7 +56,8 @@ final class CollectionTransformer implements TransformerInterface
         foreach ($data as $datum) {
             $target = null;
             if ($propertyAccessor->isReadable($datum, 'id')) {
-                $target = null !== $propertyAccessor->getValue($datum, 'id') ? $this->em->getRepository($fcqn)->find($datum->id) : $target;
+                $id = $propertyAccessor->getValue($datum, 'id');
+                $target = null !== $id ? $this->em->getRepository($fcqn)->find($id) : $target;
             }
 
             $target = $this->mappingService->mapToTarget($datum, $target);
