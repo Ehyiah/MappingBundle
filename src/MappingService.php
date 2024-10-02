@@ -52,6 +52,11 @@ final class MappingService implements MappingServiceInterface
                         $value = $propertyAccessor->getValue($mappingAwareSourceObject, $sourcePropertyName);
                     }
 
+                    $ignoreNullValueOnProperty = $targetMappingOptions['ignoreNullValue'];
+                    if (true === $ignoreNullValueOnProperty && null === $value) {
+                        continue;
+                    }
+
                     $propertyAccessor->setValue($targetObject, $targetPropertyPath, $value);
                     ++$modificationCount;
                 }
@@ -92,6 +97,11 @@ final class MappingService implements MappingServiceInterface
                         $value = $propertyAccessor->getValue($sourceObject, $targetPropertyPath);
                     }
 
+                    $ignoreNullValueOnProperty = $targetMappingOptions['ignoreNullValue'];
+                    if (true === $ignoreNullValueOnProperty && null === $value) {
+                        continue;
+                    }
+
                     $propertyAccessor->setValue($mappingAwareTargetObject, $sourcePropertyName, $value);
                 }
             } else {
@@ -117,7 +127,7 @@ final class MappingService implements MappingServiceInterface
         $attributesClass = $reflection->getAttributes(MappingAware::class);
 
         if (0 === count($attributesClass)) {
-            throw new NotMappableObject('Can not automap object, because object is not using Attribute : ' . MappingAware::class);
+            throw new NotMappableObject('Can not auto-map object, because object is not using Attribute : ' . MappingAware::class);
         }
 
         $mapping = [];
@@ -138,12 +148,14 @@ final class MappingService implements MappingServiceInterface
                         $mapping['properties'][$property->getName()]['transformer'] = $attributeToMap->newInstance()->transformer;
                         $mapping['properties'][$property->getName()]['options'] = $attributeToMap->newInstance()->options;
                     }
+
+                    $mapping['properties'][$property->getName()]['ignoreNullValue'] = $attributeToMap->newInstance()->ignoreNullValue;
                 }
             }
         }
 
         if (null === $mapping['targetClass']) {
-            throw new NotMappableObject('Can not automap object, because target class is not specified on class Attribute : ' . MappingAware::class);
+            throw new NotMappableObject('Can not auto-map object, because target class is not specified on class Attribute : ' . MappingAware::class);
         }
 
         $this->mappingLogger->info('Properties to map', [$mapping]);

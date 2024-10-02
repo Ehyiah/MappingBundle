@@ -65,6 +65,8 @@ a different name, you can use the ```target``` option to specify the name in the
 
 As the mapping logic is using the propertyAccess component, you can specify nested properties in the target class. see ```zipcode``` and ```street``` properties in the example below.
 
+If you want to ignore ``null`` values when mapping from an object to the other, juste use the ``ignoreNullValue`` option on each properties you need to.
+
 ## <u>Simple Usage</u>
 
 1 - Create a DTO that will 'hold' the mapping logic
