@@ -1,9 +1,0 @@
-version: '3.8'
-services:
-    php:
-        volumes:
-            - ~/.ssh:/root/.ssh
-
-#github local
-### https://lindevs.com/install-act-on-ubuntu
-### start with act -s GITHUB_TOKEN and provide a github personnal access token
