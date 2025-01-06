@@ -14,7 +14,7 @@ jobs:
         strategy:
             fail-fast: true
             matrix:
-                php-versions: ['8.1', '8.2', '8.3']
+                php-versions: ['8.1', '8.2', '8.3', '8.4']
 
         steps:
             # —— Setup Github actions 🐙 —————————————————————————————————————————————
@@ -75,7 +75,7 @@ jobs:
         strategy:
             fail-fast: true
             matrix:
-                php-versions: [ '8.1', '8.2', '8.3' ]
+                php-versions: [ '8.1', '8.2', '8.3', '8.4' ]
         steps:
             - uses: actions/checkout@v4
             - uses: symfonycorp/security-checker-action@v4
